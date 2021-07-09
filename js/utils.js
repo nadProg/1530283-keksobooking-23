@@ -68,20 +68,11 @@ export const switchOnModalMode = () => bodyNode.classList.add(MODAL_OPEN_CLASS);
 
 export const switchOffModalMode = () => bodyNode.classList.remove(MODAL_OPEN_CLASS);
 
-// const picturesContainerNode = bodyNode.querySelector('.pictures');
+const adFormNode = bodyNode.querySelector('.ad-form');
 
-// const bigPictureContainerNode = bodyNode.querySelector('.big-picture');
-
-// const uploadFormNode = picturesContainerNode.querySelector('.img-upload__form');
-
-// const uploadImageNode = uploadFormNode.querySelector('.img-upload__preview img');
-
-// export const commonNodes = {
-//   uploadFormNode,
-//   uploadImageNode,
-//   picturesContainerNode,
-//   bigPictureContainerNode,
-// };
+export const commonNodes = {
+  adFormNode,
+};
 
 export const disableForm = (form) => {
   form.classList.add(`${form.classList[0]}--disabled`);

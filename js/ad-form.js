@@ -1,8 +1,9 @@
 import { enableForm, disableForm } from './utils.js';
 import { initPrice, destroyPrice } from './price.js';
 import { initRoomCapacity, destroyRoomCapacity } from './room-capacity.js';
+import { commonNodes } from './utils.js';
 
-const adFormNode = document.querySelector('.ad-form');
+const { adFormNode }= commonNodes;
 
 export const initAdForm = () => {
   enableForm(adFormNode);

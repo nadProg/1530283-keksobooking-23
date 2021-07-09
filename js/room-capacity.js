@@ -22,7 +22,10 @@ const roomsValueToCapacityValues = {
 
 let currentCapaciteValues = [];
 
-const adFormNode = document.querySelector('.ad-form');
+import { commonNodes } from './utils.js';
+
+const { adFormNode } = commonNodes;
+
 const roomsNode = adFormNode.querySelector('#room_number');
 const capacityNode = adFormNode.querySelector('#capacity');
 

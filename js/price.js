@@ -1,3 +1,5 @@
+import { commonNodes } from './utils.js';
+
 const typeToMinPrice = {
   bungalow: 0,
   flat: 1000,
@@ -6,7 +8,8 @@ const typeToMinPrice = {
   palace: 10000,
 };
 
-const adFormNode = document.querySelector('.ad-form');
+const { adFormNode } = commonNodes;
+
 const typeNode = adFormNode.querySelector('#type');
 const priceNode = adFormNode.querySelector('#price');
 
