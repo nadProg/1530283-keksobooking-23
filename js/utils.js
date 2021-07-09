@@ -82,3 +82,17 @@ export const switchOffModalMode = () => bodyNode.classList.remove(MODAL_OPEN_CLA
 //   picturesContainerNode,
 //   bigPictureContainerNode,
 // };
+
+export const disableForm = (form) => {
+  form.classList.add(`${form.classList[0]}--disabled`);
+  for (const element of form.elements) {
+    element.disabled = true;
+  }
+};
+
+export const enableForm = (form) => {
+  form.classList.remove(`${form.classList[0]}--disabled`);
+  for (const element of form.elements) {
+    element.disabled = false;
+  }
+};
