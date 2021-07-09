@@ -1,3 +1,4 @@
 import { getData } from './api.js';
+import { renderCards } from './cards.js';
 
-getData(console.log, console.log);
+getData((cards) => {console.log(cards); renderCards([cards[0]]);}, console.log);
