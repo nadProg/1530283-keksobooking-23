@@ -1,3 +1,6 @@
+import { setAddress } from './address.js';
+import { createCardNode } from './cards.js';
+
 const INITIAL_VIEW = {
   lat: 35.68,
   lng: 139.75,
@@ -18,6 +21,8 @@ const icon = L.icon({
 
 let map = null;
 let markerGroup = null;
+let mainMarker = null;
+let mainMarkerCallback = null;
 
 export const initMap = () => new Promise((resolve) => {
   map = L.map('map-canvas');
@@ -35,13 +40,15 @@ export const initMap = () => new Promise((resolve) => {
     },
   ).addTo(map);
 
-  const mainMarker = L.marker(
+  mainMarker = L.marker(
     INITIAL_VIEW,
     {
       icon: mainIcon,
       draggable: true,
     },
   );
+
+  mainMarker.on('drag', ({target}) => setAddress(target.getLatLng()));
 
   markerGroup = L.layerGroup();
 
@@ -62,6 +69,18 @@ export const addMarkers = (data) => {
       },
     );
 
-    marker.addTo(markerGroup);
+    marker
+      .bindPopup(
+        createCardNode(datum),
+        {
+          offset: [0, -35],
+        },
+      )
+      .addTo(markerGroup);
   }
+};
+
+export const setMainMarkerCallback = (cb) => {
+  mainMarkerCallback = cb;
+  mainMarkerCallback(mainMarker.getLatLng());
 };

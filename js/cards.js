@@ -8,8 +8,6 @@ const offerTypes = {
   hotel: 'Отель',
 };
 
-const cardsContainerNode = document.querySelector('#map-canvas');
-
 const cardTemplateNode = document.querySelector('#card').content.querySelector('.popup');
 const photoTemplateNode = cardTemplateNode.querySelector('.popup__photo');
 
@@ -58,14 +56,4 @@ export const createCardNode = ({ author, offer }) => {
   }
 
   return cardNode;
-};
-
-const clearContainer = () => {
-  const renderedCards = cardsContainerNode.querySelectorAll('.picture');
-  renderedCards.forEach((picture) => picture.remove());
-};
-
-export const renderCards = (cards) => {
-  clearContainer();
-  renderNodes(cards.map(createCardNode), cardsContainerNode);
 };

@@ -4,7 +4,7 @@ import { initPrice, destroyPrice } from './price.js';
 import { initRoomCapacity, destroyRoomCapacity } from './room-capacity.js';
 import { initCheckTime, destroyCheckTime} from './check-time.js';
 
-const { adFormNode }= commonNodes;
+const { adFormNode } = commonNodes;
 
 export const initAdForm = () => {
   enableForm(adFormNode);
