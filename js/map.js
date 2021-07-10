@@ -1,6 +1,7 @@
 import { setAddress } from './address.js';
 import { createCardNode } from './cards.js';
 
+const INITIALIZATION_TIMEOUT = 1000;
 const INITIAL_VIEW = {
   lat: 35.68,
   lng: 139.75,
@@ -24,14 +25,11 @@ let markerGroup = null;
 let mainMarker = null;
 let mainMarkerCallback = null;
 
-export const initMap = () => new Promise((resolve) => {
+export const initMap = () => new Promise((resolve, reject) => {
   map = L.map('map-canvas');
 
   map.on('load', () => resolve());
-
-  setTimeout(() => {
-    map.setView(INITIAL_VIEW, INITIAL_ZOOM);
-  }, 500);
+  setTimeout(() => reject(new Error('Map initialization timeout')), INITIALIZATION_TIMEOUT );
 
   L.tileLayer(
     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -54,6 +52,8 @@ export const initMap = () => new Promise((resolve) => {
 
   mainMarker.addTo(map);
   markerGroup.addTo(map);
+
+  map.setView(INITIAL_VIEW, INITIAL_ZOOM);
 });
 
 export const addMarkers = (data) => {

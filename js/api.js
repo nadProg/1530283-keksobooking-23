@@ -1,30 +1,20 @@
-import { isFunction } from './utils.js';
-
 const Url = {
   POST: 'https://23.javascript.pages.academy/keksobooking',
   GET: 'https://23.javascript.pages.academy/keksobooking/data',
 };
 
-const fetchData = async (method, onSuccess, onError, body) => {
+const fetchData = async (method, body) => {
   method = method.toUpperCase();
 
-  try {
-    const response = await fetch(Url[method], { method, body });
+  const response = await fetch(Url[method], { method, body });
 
-    if (!response.ok) {
-      throw new Error(`${response.status} — ${response.statusText}`);
-    }
-
-    const result = await response.json();
-    return isFunction(onSuccess) ? onSuccess(result) : result;
-
-  } catch (error) {
-    if (isFunction(onError)) {
-      onError(error);
-    }
+  if (!response.ok) {
+    throw new Error(`${response.status} — ${response.statusText}`);
   }
+
+  return response.json();
 };
 
-export const getData = (onSuccess, onError) => fetchData('GET', onSuccess, onError);
+export const getData = () => fetchData('GET');
 
-export const postData = (onSuccess, onError, body) => fetchData('POST', onSuccess, onError, body);
+export const postData = (body) => fetchData('POST', body);
