@@ -1,22 +1,32 @@
 const INITIAL_VIEW = {
-  lat: 35.68786,
-  lng: 139.75549,
+  lat: 35.68,
+  lng: 139.75,
 };
-const INITIAL_MAIN_MARKER_COORDS = {
-  lat: 35.68786,
-  lng: 139.76650,
-};
-const INITIAL_ZOOM = 12;
+const INITIAL_ZOOM = 13;
+
+const mainIcon = L.icon({
+  iconUrl: 'img/main-pin.svg',
+  iconSize: [52, 52],
+  iconAnchor: [26, 52],
+});
+
+const icon = L.icon({
+  iconUrl: 'https://assets.htmlacademy.ru/content/intensive/javascript-1/demo/interactive-map/pin.svg',
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+});
 
 let map = null;
-
+let markerGroup = null;
 
 export const initMap = () => new Promise((resolve) => {
   map = L.map('map-canvas');
 
   map.on('load', () => resolve());
 
-  map.setView(INITIAL_VIEW, INITIAL_ZOOM);
+  setTimeout(() => {
+    map.setView(INITIAL_VIEW, INITIAL_ZOOM);
+  }, 500);
 
   L.tileLayer(
     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -25,19 +35,33 @@ export const initMap = () => new Promise((resolve) => {
     },
   ).addTo(map);
 
-  const mainMarkerIcon = L.icon({
-    iconUrl: 'img/main-pin.svg',
-    iconSize: [52, 52],
-    iconAnchor: [52, 26],
-  });
-
   const mainMarker = L.marker(
-    INITIAL_MAIN_MARKER_COORDS,
+    INITIAL_VIEW,
     {
-      icon: mainMarkerIcon,
+      icon: mainIcon,
       draggable: true,
     },
   );
 
+  markerGroup = L.layerGroup();
+
   mainMarker.addTo(map);
+  markerGroup.addTo(map);
 });
+
+export const addMarkers = (data) => {
+  if (markerGroup) {
+    markerGroup.clearLayers();
+  }
+
+  for (const datum of data) {
+    const marker = L.marker(
+      datum.location,
+      {
+        icon,
+      },
+    );
+
+    marker.addTo(markerGroup);
+  }
+};
