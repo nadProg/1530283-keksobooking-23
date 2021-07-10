@@ -5,10 +5,12 @@ const ANY = 'any';
 const mapFiltersNode = document.querySelector('.map__filters');
 const filterTypeNode = mapFiltersNode.querySelector('#housing-type');
 const filterPriceNode = mapFiltersNode.querySelector('#housing-price');
+const filterRoomsNode = mapFiltersNode.querySelector('#housing-rooms');
 const filterGuestsNode = mapFiltersNode.querySelector('#housing-guests');
 const filterFeaturesNode = mapFiltersNode.querySelector('#housing-features');
 
-let initialData = [];
+let initialData = null;
+let filteredData = null;
 
 disableForm(mapFiltersNode);
 
@@ -42,6 +44,14 @@ const filterDatum = ({ offer }) => {
     }
   }
 
+  if (filterRoomsNode.value !== ANY) {
+    const isMatch = offer.rooms === Number(filterRoomsNode.value);
+
+    if (!isMatch) {
+      return false;
+    }
+  }
+
   if (filterGuestsNode.value !== ANY) {
     const isMatch = offer.guests === Number(filterGuestsNode.value);
 
@@ -64,15 +74,21 @@ const filterDatum = ({ offer }) => {
   return true;
 };
 
-export const initMapFilter = (data) => {
+export const initMapFilter = (data, cb) => {
   initialData = data;
   enableForm(mapFiltersNode);
 
   mapFiltersNode.addEventListener('change', () => {
-    const filteredData = initialData.filter(filterDatum);
+    filteredData = initialData.filter(filterDatum);
 
     console.log(filteredData);
+
+    if (cb) {
+      cb(filteredData);
+    }
   });
 
   mapFiltersNode.dispatchEvent(new Event('change'));
 };
+
+export const getFilteredData = () => [...filteredData];
