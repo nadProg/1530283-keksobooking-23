@@ -1,7 +1,7 @@
 import { getData } from './api.js';
 import { initAdForm } from './ad-form.js';
 import { enableForm, disableForm } from './utils.js';
-import { initMap, addMarkers, setMainMarkerCallback } from './map.js';
+import { initMap, addMarkers, resetMap } from './map.js';
 import { showAlert } from './alert.js';
 import { setAddress } from './address.js';
 
@@ -11,8 +11,8 @@ disableForm(mapFiltersNode);
 
 const start = async () => {
   try {
-    await initMap();
-    initAdForm();
+    await initMap(setAddress);
+    initAdForm(resetMap);
 
     try {
       const data = await getData();
@@ -20,7 +20,6 @@ const start = async () => {
 
       enableForm(mapFiltersNode);
       addMarkers(data.slice(10, 20));
-      setMainMarkerCallback(setAddress);
     } catch (error) {
       showAlert('Ошибка загрузки данных с сервера');
     }

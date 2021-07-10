@@ -28,11 +28,19 @@ const onAdFormSubmit = async (evt) => {
   submitBtnNode.disabled = false;
 };
 
-export const initAdForm = () => {
+export const initAdForm = (afterResetCallback) => {
   enableForm(adFormNode);
   initPrice();
   initRoomCapacity();
   initCheckTime();
 
   adFormNode.addEventListener('submit', onAdFormSubmit);
+
+  if (afterResetCallback) {
+    adFormNode.addEventListener('reset', (evt) => {
+      evt.preventDefault();
+      evt.currentTarget.reset();
+      afterResetCallback();
+    });
+  }
 };
