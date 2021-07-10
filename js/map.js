@@ -14,7 +14,7 @@ const mainIcon = L.icon({
 });
 
 const icon = L.icon({
-  iconUrl: 'https://assets.htmlacademy.ru/content/intensive/javascript-1/demo/interactive-map/pin.svg',
+  iconUrl: 'img/pin.svg',
   iconSize: [40, 40],
   iconAnchor: [20, 40],
 });
@@ -22,10 +22,10 @@ const icon = L.icon({
 let map = null;
 let markerGroup = null;
 let mainMarker = null;
-let mainMarkerCallback = null;
+
+export const setMoveMainMarkerHandler = (cb) => mainMarker.on('move', cb);
 
 export const initMap = (cb) => new Promise((resolve, reject) => {
-  mainMarkerCallback = cb;
   map = L.map('map-canvas');
 
   map.on('load', () => resolve());
@@ -46,7 +46,9 @@ export const initMap = (cb) => new Promise((resolve, reject) => {
     },
   );
 
-  mainMarker.on('move', ({target}) => mainMarkerCallback ? mainMarkerCallback(target.getLatLng()) : null);
+  if (cb) {
+    setMoveMainMarkerHandler(cb);
+  }
 
   markerGroup = L.layerGroup();
 
@@ -54,13 +56,16 @@ export const initMap = (cb) => new Promise((resolve, reject) => {
   markerGroup.addTo(map);
 
   map.setView(INITIAL_VIEW, INITIAL_ZOOM);
-  mainMarkerCallback(INITIAL_VIEW);
 });
+
+export const getCurrentLocation = () => mainMarker.getLatLng();
 
 export const addMarkers = (data) => {
   if (markerGroup) {
     markerGroup.clearLayers();
   }
+
+  // map.setView(getCurrentLocation(), INITIAL_ZOOM);
 
   for (const datum of data) {
     const marker = L.marker(
