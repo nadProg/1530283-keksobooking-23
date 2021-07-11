@@ -1,4 +1,4 @@
-import { commonNodes } from './utils.js';
+import { adFormNode } from './utils.js';
 
 const RoomsValue = {
   ONE: 1,
@@ -21,8 +21,6 @@ const roomsValueToCapacityValues = {
   [RoomsValue.HUNDRED]: [CapacityValue.NONE],
 
 };
-
-const { adFormNode } = commonNodes;
 
 const roomsNode = adFormNode.querySelector('#room_number');
 const capacityNode = adFormNode.querySelector('#capacity');

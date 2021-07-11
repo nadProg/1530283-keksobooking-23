@@ -1,12 +1,11 @@
-import { commonNodes } from './utils.js';
-import { enableForm, disableForm } from './utils.js';
-import { initPrice } from './price.js';
-import { initRoomCapacity } from './room-capacity.js';
-import { initCheckTime} from './check-time.js';
+import { adFormNode, enableForm, disableForm } from './utils.js';
 import { postData } from './api.js';
 import { showModalMessage } from './modal-message.js';
+import * as avatar from './avatar.js';
+import { initPrice } from './price.js';
+import { initCheckTime} from './check-time.js';
+import { initRoomCapacity } from './room-capacity.js';
 
-const { adFormNode } = commonNodes;
 const addressNode = adFormNode.querySelector('#address');
 const submitBtnNode = adFormNode.querySelector('.ad-form__submit');
 
@@ -29,13 +28,19 @@ const onAdFormSubmit = async (evt) => {
   submitBtnNode.disabled = false;
 };
 
+const onAdFormReset = () => {
+  avatar.reset();
+};
+
 export const initAdForm = (afterResetCallback) => {
   enableForm(adFormNode);
+  avatar.initialize();
   initPrice();
   initCheckTime();
   initRoomCapacity();
 
   adFormNode.addEventListener('submit', onAdFormSubmit);
+  adFormNode.addEventListener('reset', onAdFormReset);
 
   if (afterResetCallback) {
     adFormNode.addEventListener('reset', () => setTimeout(() => afterResetCallback()));

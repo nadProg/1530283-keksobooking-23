@@ -1,6 +1,4 @@
-import { commonNodes } from './utils.js';
-
-const { adFormNode } = commonNodes;
+import { adFormNode } from './utils.js';
 
 const checkInNode = adFormNode.querySelector('#timein');
 const checkOutNode = adFormNode.querySelector('#timeout');
