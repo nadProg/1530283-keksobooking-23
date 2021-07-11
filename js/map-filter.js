@@ -1,4 +1,4 @@
-import { enableForm, disableForm } from './utils.js';
+import { enableForm, disableForm, isFunction } from './utils.js';
 
 const ANY = 'any';
 
@@ -20,14 +20,14 @@ const filterRoomsNode = mapFilterNode.querySelector('#housing-rooms');
 const filterGuestsNode = mapFilterNode.querySelector('#housing-guests');
 const filterFeaturesNode = mapFilterNode.querySelector('#housing-features');
 
-let initialData = null;
-let filteredData = null;
+let initialOffers = null;
+let filteredOffers = null;
 
 disableForm(mapFilterNode);
 
 const isAny = (value) => value === ANY;
 
-const filterDatum = ({ offer }) => {
+const filterOffers = ({ offer }) => {
   if (!isAny(filterTypeNode.value)) {
     const isMatch = filterTypeNode.value === offer.type;
 
@@ -89,19 +89,21 @@ const filterDatum = ({ offer }) => {
   return true;
 };
 
-export const initMapFilter = (data, callback) => {
-  initialData = data;
+const initialize = (offers, afterChangeCallback) => {
+  initialOffers = offers;
   enableForm(mapFilterNode);
 
   mapFilterNode.addEventListener('change', () => {
-    filteredData = initialData.filter(filterDatum);
+    filteredOffers = initialOffers.filter(filterOffers);
 
-    if (callback) {
-      callback(filteredData);
+    if (isFunction(afterChangeCallback)) {
+      afterChangeCallback();
     }
   });
 
   mapFilterNode.dispatchEvent(new Event('change'));
 };
 
-export const getFilteredData = () => filteredData;
+const getFilteredOffers = () => filteredOffers;
+
+export { initialize, getFilteredOffers };

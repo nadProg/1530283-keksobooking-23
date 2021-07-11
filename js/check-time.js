@@ -12,7 +12,7 @@ const onCheckInNodeChange = ({ currentTarget }) => synchronizeTime(currentTarget
 
 const onCheckOutNodeChange = ({ currentTarget }) => synchronizeTime(currentTarget);
 
-export const initCheckTime = () => {
+export const initialize = () => {
   checkInNode.addEventListener('change', onCheckInNodeChange);
   checkOutNode.addEventListener('change', onCheckOutNodeChange);
 };

@@ -1,8 +1,9 @@
 import { createCardNode } from './cards.js';
+import { isFunction } from './utils.js';
 
 const INITIALIZATION_DELAY = 1500;
 const INITIALIZATION_TIMEOUT = 5000;
-const INITIAL_ZOOM = 13;
+const INITIAL_ZOOM = 14;
 const INITIAL_VIEW = { lat: 35.68, lng: 139.75 };
 const TILE_LAYER_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const TILE_LAYER_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
@@ -33,9 +34,7 @@ const mainMarker = L.marker(INITIAL_VIEW, mainMarkerOptions);
 
 let map = null;
 
-export const setMoveMainMarkerHandler = (callback) => mainMarker.on('move', callback);
-
-export const initialize = (callback) => new Promise((resolve, reject) => {
+const initialize = (callback) => new Promise((resolve, reject) => {
   map = L.map('map-canvas');
 
   map.on('load', () => resolve());
@@ -45,18 +44,17 @@ export const initialize = (callback) => new Promise((resolve, reject) => {
   L.tileLayer(TILE_LAYER_URL, { attribution: TILE_LAYER_ATTRIBUTION })
     .addTo(map);
 
-  mainMarker.addTo(map);
-
-  markerGroup.addTo(map);
-
-  if (callback) {
-    setMoveMainMarkerHandler(callback);
+  if (isFunction(callback)) {
+    mainMarker.on('move', callback);
   }
+
+  mainMarker.addTo(map);
+  markerGroup.addTo(map);
 
   setTimeout(() => map.setView(INITIAL_VIEW, INITIAL_ZOOM), INITIALIZATION_DELAY);
 });
 
-export const addMarkers = (data) => {
+const addMarkers = (data) => {
   markerGroup.clearLayers();
 
   data.forEach((datum) => {
@@ -67,12 +65,14 @@ export const addMarkers = (data) => {
   });
 };
 
-export const reset = () => {
+const reset = () => {
   map.closePopup();
   map.setView(INITIAL_VIEW, INITIAL_ZOOM);
   mainMarker.setLatLng(INITIAL_VIEW);
 };
 
-export const getCurrentLocation = () => mainMarker.getLatLng();
+const getCurrentLocation = () => mainMarker.getLatLng();
 
-export const setViewToCurrentLocation = () => map.setView(getCurrentLocation(), INITIAL_ZOOM);
+const setViewToCurrentLocation = () => map.setView(getCurrentLocation(), INITIAL_ZOOM);
+
+export { initialize, reset, addMarkers, getCurrentLocation, setViewToCurrentLocation };

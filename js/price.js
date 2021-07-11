@@ -17,6 +17,6 @@ const onTypeNodeChange = (evt) => {
   priceNode.placeholder = minPrice;
 };
 
-export const initPrice = () => {
+export const initialize = () => {
   typeNode.addEventListener('change', onTypeNodeChange);
 };

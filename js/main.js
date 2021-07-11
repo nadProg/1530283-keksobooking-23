@@ -1,41 +1,54 @@
-import { debounce } from './utils.js';
+import { debounce, sortOffersByDistance } from './utils.js';
 import { getData } from './api.js';
-import { initAdForm, setAddress } from './ad-form.js';
-import * as map from './map.js';
-import { initMapFilter, getFilteredData } from './map-filter.js';
 import { showAlert } from './alert.js';
+import * as adForm from './ad-form.js';
+import * as map from './map.js';
+import * as mapFilter from './map-filter.js';
 
-const MAX_SILIMIAR_MARKERS_AMOUNT = 10;
+const MAX_SIMILAR_OFFERS_AMOUNT = 10;
 const DEBOUNCE_TIME = 500;
 
-const addSimilarMarkers = debounce(() => {
-  const filteredData = getFilteredData();
+const setCurrentAddress = () => {
   const currentLocation = map.getCurrentLocation();
-  const mappedData = filteredData.map((datum) => {
-    const location = L.latLng(datum.location);
-    return {...datum, distance: Math.round(currentLocation.distanceTo(location))};
-  });
-  mappedData.sort((a, b) => a.distance - b.distance);
+  adForm.setAddress(currentLocation);
+};
 
-  console.log(mappedData.slice(0, MAX_SILIMIAR_MARKERS_AMOUNT));
-  map.addMarkers(mappedData.slice(0, MAX_SILIMIAR_MARKERS_AMOUNT));
+const showSimilarOffers = debounce(() => {
+  const filteredOffers = mapFilter.getFilteredOffers();
+
+  if (filteredOffers) {
+    const currentLocation = map.getCurrentLocation();
+    const sortedOffers = filteredOffers
+      .map((offer) => {
+        const location = L.latLng(offer.location);
+        return {...offer, distance: Math.round(currentLocation.distanceTo(location))};
+      })
+      .sort(sortOffersByDistance);
+
+    map.addMarkers(sortedOffers.slice(0, MAX_SIMILAR_OFFERS_AMOUNT));
+  }
 }, DEBOUNCE_TIME);
+
+// Именование ?
+const afterMapFilterChange = () => {
+  showSimilarOffers();
+  map.setViewToCurrentLocation();
+};
+
+const afterMainMarkerMove = () => {
+  setCurrentAddress();
+  showSimilarOffers();
+};
 
 const start = async () => {
   try {
-    await map.initialize(({ target }) => setAddress(target.getLatLng()));
-    setAddress(map.getCurrentLocation());
-    initAdForm(map.reset);
+    await map.initialize(afterMainMarkerMove);
+    adForm.initialize(map.reset);
+    setCurrentAddress();
 
     try {
       const data = await getData();
-
-      initMapFilter(data, () => {
-        addSimilarMarkers();
-        map.setViewToCurrentLocation();
-      });
-
-      map.setMoveMainMarkerHandler(addSimilarMarkers);
+      mapFilter.initialize(data, afterMapFilterChange);
     } catch (error) {
       showAlert('Ошибка загрузки данных с сервера');
     }

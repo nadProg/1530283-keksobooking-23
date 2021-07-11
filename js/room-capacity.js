@@ -57,7 +57,7 @@ const onCapacityNodeChange = () => {
   capacityNode.setCustomValidity('');
 };
 
-export const initRoomCapacity = () => {
+export const initialize = () => {
   roomsNode.addEventListener('change', onRoomsNodeChange);
   capacityNode.addEventListener('change', onCapacityNodeChange);
 };

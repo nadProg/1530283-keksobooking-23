@@ -75,3 +75,5 @@ export const loadImage = (file, imageNode) => getURLfromFile(file)
       reject(new Error('Image load error'));
     }
   }));
+
+export const sortOffersByDistance = (offerA, offerB) => offerA.distance - offerB.distance;

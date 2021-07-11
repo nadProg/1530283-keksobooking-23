@@ -1,11 +1,11 @@
-import { adFormNode, enableForm, disableForm } from './utils.js';
+import { adFormNode, enableForm, disableForm, isFunction } from './utils.js';
 import { postData } from './api.js';
 import { showModalMessage } from './modal-message.js';
 import * as avatar from './avatar.js';
 import * as photo from './photo.js';
-import { initPrice } from './price.js';
-import { initCheckTime} from './check-time.js';
-import { initRoomCapacity } from './room-capacity.js';
+import * as price from './price.js';
+import * as checkTime from './check-time.js';
+import * as roomCapacity from './room-capacity.js';
 
 const addressNode = adFormNode.querySelector('#address');
 const submitBtnNode = adFormNode.querySelector('.ad-form__submit');
@@ -34,22 +34,22 @@ const onAdFormReset = () => {
   avatar.reset();
 };
 
-export const initAdForm = (afterResetCallback) => {
+export const initialize = (afterResetCallback) => {
   enableForm(adFormNode);
   photo.initialize();
   avatar.initialize();
-  initPrice();
-  initCheckTime();
-  initRoomCapacity();
+  price.initialize();
+  checkTime.initialize();
+  roomCapacity.initialize();
 
   adFormNode.addEventListener('submit', onAdFormSubmit);
   adFormNode.addEventListener('reset', onAdFormReset);
 
-  if (afterResetCallback) {
+  if (isFunction(afterResetCallback)) {
     adFormNode.addEventListener('reset', () => setTimeout(() => afterResetCallback()));
   }
 };
 
 export const setAddress = ({ lat, lng }) => {
-  addressNode.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  addressNode.value = `${Number(lat.toFixed(5))}, ${Number(lng.toFixed(5))}`;
 };
