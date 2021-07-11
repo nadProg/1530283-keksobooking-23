@@ -1,24 +1,34 @@
-import { createCardNode } from './cards.js';
 import { isFunction } from './utils.js';
+import { createPopupNode } from './popup.js';
 
-const INITIALIZATION_DELAY = 1500;
-const INITIALIZATION_TIMEOUT = 5000;
 const INITIAL_ZOOM = 14;
-const INITIAL_VIEW = { lat: 35.68, lng: 139.75 };
+const INITIAL_VIEW = {
+  lat: 35.68,
+  lng: 139.75,
+};
+const ICON_URL = 'img/pin.svg';
+const ICON_WIDTH = 40;
+const MAIN_ICON_URL = 'img/main-pin.svg';
+const MAIN_ICON_WIDTH = 52;
 const TILE_LAYER_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const TILE_LAYER_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-
-const mainIcon = L.icon({
-  iconUrl: 'img/main-pin.svg',
-  iconSize: [52, 52],
-  iconAnchor: [26, 52],
-});
+const POPUP_OFFSET = [0, -35];
 
 const icon = L.icon({
-  iconUrl: 'img/pin.svg',
-  iconSize: [40, 40],
-  iconAnchor: [20, 40],
+  iconUrl: ICON_URL,
+  iconSize: [ICON_WIDTH, ICON_WIDTH],
+  iconAnchor: [ICON_WIDTH / 2, ICON_WIDTH],
 });
+
+const mainIcon = L.icon({
+  iconUrl: MAIN_ICON_URL,
+  iconSize: [MAIN_ICON_WIDTH, MAIN_ICON_WIDTH],
+  iconAnchor: [MAIN_ICON_WIDTH / 2, MAIN_ICON_WIDTH],
+});
+
+const markerOptions = {
+  icon,
+};
 
 const mainMarkerOptions = {
   icon: mainIcon,
@@ -26,41 +36,51 @@ const mainMarkerOptions = {
   riseOnHover: true,
 };
 
-const markerOptions = { icon };
-const popupOptions =  { offset: [0, -35] };
-
-const markerGroup = L.layerGroup();
-const mainMarker = L.marker(INITIAL_VIEW, mainMarkerOptions);
+const popupOptions =  {
+  offset: POPUP_OFFSET,
+};
 
 let map = null;
+let mainMarker = null;
+let markerGroup = null;
 
-const initialize = (callback) => new Promise((resolve, reject) => {
-  map = L.map('map-canvas');
+const onTileLayerLoad = (afterMainMarkerMoveCallback) => {
+  markerGroup = L.layerGroup().addTo(map);
+  mainMarker = L.marker(INITIAL_VIEW, mainMarkerOptions).addTo(map);
 
-  map.on('load', () => resolve());
-
-  setTimeout(() => reject(new Error('Map initialization timeout')), INITIALIZATION_TIMEOUT );
-
-  L.tileLayer(TILE_LAYER_URL, { attribution: TILE_LAYER_ATTRIBUTION })
-    .addTo(map);
-
-  if (isFunction(callback)) {
-    mainMarker.on('move', callback);
+  if (isFunction(afterMainMarkerMoveCallback)) {
+    mainMarker.on('move', afterMainMarkerMoveCallback);
   }
+};
 
-  mainMarker.addTo(map);
-  markerGroup.addTo(map);
+const onMapLoad = (afterMainMarkerMoveCallback) => new Promise((resolve, reject) => {
+  L.tileLayer(TILE_LAYER_URL, { attribution: TILE_LAYER_ATTRIBUTION })
+    .on('tileload', async () => {
+      onTileLayerLoad(afterMainMarkerMoveCallback);
+      resolve();
+    })
+    .on('tileerror', () => reject(new Error('Map initialization error')))
+    .addTo(map);
+});
 
-  setTimeout(() => map.setView(INITIAL_VIEW, INITIAL_ZOOM), INITIALIZATION_DELAY);
+const initialize = (afterMainMarkerMoveCallback) => new Promise((resolve, reject) => {
+  map = L.map('map-canvas');
+  map.on('load', async () => {
+    try {
+      await onMapLoad(afterMainMarkerMoveCallback);
+      resolve();
+    } catch (error) {
+      reject(error);
+    }
+  }).setView(INITIAL_VIEW, INITIAL_ZOOM);
 });
 
 const addMarkers = (data) => {
   markerGroup.clearLayers();
 
   data.forEach((datum) => {
-    const { location } = datum;
-    L.marker(location, markerOptions)
-      .bindPopup(createCardNode(datum), popupOptions)
+    L.marker(datum.location, markerOptions)
+      .bindPopup(createPopupNode(datum), popupOptions)
       .addTo(markerGroup);
   });
 };
@@ -73,6 +93,9 @@ const reset = () => {
 
 const getCurrentLocation = () => mainMarker.getLatLng();
 
-const setViewToCurrentLocation = () => map.setView(getCurrentLocation(), INITIAL_ZOOM);
+const setViewToCurrentLocation = () => {
+  map.closePopup();
+  map.setView(getCurrentLocation(), INITIAL_ZOOM);
+};
 
 export { initialize, reset, addMarkers, getCurrentLocation, setViewToCurrentLocation };
