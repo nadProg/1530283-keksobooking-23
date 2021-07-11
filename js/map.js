@@ -44,7 +44,7 @@ let map = null;
 let mainMarker = null;
 let markerGroup = null;
 
-const onTileLayerLoad = (afterMainMarkerMoveCallback) => {
+const finishInitialization = (afterMainMarkerMoveCallback) => {
   markerGroup = L.layerGroup().addTo(map);
   mainMarker = L.marker(INITIAL_VIEW, mainMarkerOptions).addTo(map);
 
@@ -53,10 +53,11 @@ const onTileLayerLoad = (afterMainMarkerMoveCallback) => {
   }
 };
 
-const onMapLoad = (afterMainMarkerMoveCallback) => new Promise((resolve, reject) => {
+const loadTileLayer = (afterMainMarkerMoveCallback) => new Promise((resolve, reject) => {
   L.tileLayer(TILE_LAYER_URL, { attribution: TILE_LAYER_ATTRIBUTION })
-    .on('tileload', async () => {
-      onTileLayerLoad(afterMainMarkerMoveCallback);
+    .on('load', async (evt) => {
+      evt.target.off();
+      finishInitialization(afterMainMarkerMoveCallback);
       resolve();
     })
     .on('tileerror', () => reject(new Error('Map initialization error')))
@@ -67,7 +68,7 @@ const initialize = (afterMainMarkerMoveCallback) => new Promise((resolve, reject
   map = L.map('map-canvas');
   map.on('load', async () => {
     try {
-      await onMapLoad(afterMainMarkerMoveCallback);
+      await loadTileLayer(afterMainMarkerMoveCallback);
       resolve();
     } catch (error) {
       reject(error);
