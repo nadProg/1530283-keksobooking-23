@@ -104,6 +104,11 @@ const initialize = (offers, afterChangeCallback) => {
   mapFilterNode.dispatchEvent(new Event('change'));
 };
 
+const reset = () => {
+  mapFilterNode.reset();
+  mapFilterNode.dispatchEvent(new Event('change'));
+};
+
 const getFilteredOffers = () => filteredOffers;
 
-export { initialize, getFilteredOffers };
+export { initialize, reset, getFilteredOffers };

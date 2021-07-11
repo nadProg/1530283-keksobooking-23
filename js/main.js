@@ -40,10 +40,15 @@ const afterMainMarkerMove = () => {
   showSimilarOffers();
 };
 
+const afterAdFormReset = () => {
+  map.reset();
+  mapFilter.reset();
+};
+
 const start = async () => {
   try {
     await map.initialize(afterMainMarkerMove);
-    adForm.initialize(map.reset);
+    adForm.initialize(afterAdFormReset);
     setCurrentAddress();
 
     try {
