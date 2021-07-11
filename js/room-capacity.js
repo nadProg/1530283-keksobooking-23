@@ -1,3 +1,5 @@
+import { commonNodes } from './utils.js';
+
 const RoomsValue = {
   ONE: 1,
   TWO: 2,
@@ -20,10 +22,6 @@ const roomsValueToCapacityValues = {
 
 };
 
-let currentCapaciteValues = [];
-
-import { commonNodes } from './utils.js';
-
 const { adFormNode } = commonNodes;
 
 const roomsNode = adFormNode.querySelector('#room_number');
@@ -35,6 +33,8 @@ for (const capacityOptionNode of capacityNode.options) {
   capacityValueToNode[value] = capacityOptionNode;
 }
 
+let currentCapacityValues = [];
+
 const getCapacityValidity = () => {
   const roomsValue = roomsNode.value;
   const capacityValue = capacityNode.value;
@@ -45,16 +45,12 @@ const getCapacityValidity = () => {
 };
 
 const onRoomsNodeChange = () => {
-  for (const capacityValue of currentCapaciteValues) {
-    capacityValueToNode[capacityValue].disabled = true;
-  }
-
   const roomsValue = roomsNode.value;
-  currentCapaciteValues = roomsValueToCapacityValues[roomsValue];
 
-  for (const capacityValue of currentCapaciteValues) {
-    capacityValueToNode[capacityValue].disabled = false;
-  }
+  currentCapacityValues.forEach((value) => capacityValueToNode[value].disabled = true);
+
+  currentCapacityValues = roomsValueToCapacityValues[roomsValue];
+  currentCapacityValues.forEach((value) => capacityValueToNode[value].disabled = false);
 
   capacityNode.setCustomValidity(getCapacityValidity());
 };
