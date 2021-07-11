@@ -1,27 +1,35 @@
 import { adFormNode, loadImage } from './utils.js';
+import { showAlert, hideAlert } from './alert.js';
 
 const DEFAULT_AVATAR = 'img/muffin-grey.svg';
 
 const avatarInputNode = adFormNode.querySelector('#avatar');
 const avatarImageNode = adFormNode.querySelector('.ad-form-header__preview img');
 
-const onAvatarInputNodeChange = async ({ currentTarget }) => {
+const reset = () => avatarImageNode.src = DEFAULT_AVATAR;
+
+const onAvatartNodeClick = () => hideAlert();
+
+const onAvatarInputNodeChange = async () => {
+  const file = avatarInputNode.files[0];
+
+  if (!file) {
+    reset();
+    return;
+  }
+
   try {
-    const file = currentTarget.files[0];
     await loadImage(file, avatarImageNode);
-    currentTarget.setCustomValidity('');
   } catch (error) {
-    avatarImageNode.src = '';
-    currentTarget.setCustomValidity('Ошибка загрузки фото');
-    currentTarget.reportValidity();
+    reset();
+    avatarInputNode.value = '';
+    showAlert('Ошибка загрузки фото');
   }
 };
 
-export const initialize = () => {
+const initialize = () => {
+  avatarInputNode.addEventListener('click', onAvatartNodeClick);
   avatarInputNode.addEventListener('change', onAvatarInputNodeChange);
 };
 
-export const reset = () => {
-  avatarImageNode.src = DEFAULT_AVATAR;
-  avatarInputNode.setCustomValidity('');
-};
+export { initialize, reset };

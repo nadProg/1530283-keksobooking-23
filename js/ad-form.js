@@ -2,6 +2,7 @@ import { adFormNode, enableForm, disableForm } from './utils.js';
 import { postData } from './api.js';
 import { showModalMessage } from './modal-message.js';
 import * as avatar from './avatar.js';
+import * as photo from './photo.js';
 import { initPrice } from './price.js';
 import { initCheckTime} from './check-time.js';
 import { initRoomCapacity } from './room-capacity.js';
@@ -29,11 +30,13 @@ const onAdFormSubmit = async (evt) => {
 };
 
 const onAdFormReset = () => {
+  photo.reset();
   avatar.reset();
 };
 
 export const initAdForm = (afterResetCallback) => {
   enableForm(adFormNode);
+  photo.initialize();
   avatar.initialize();
   initPrice();
   initCheckTime();
