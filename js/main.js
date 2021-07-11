@@ -1,10 +1,9 @@
 import { debounce } from './utils.js';
 import { getData } from './api.js';
-import { initAdForm } from './ad-form.js';
+import { initAdForm, setAddress } from './ad-form.js';
 import * as map from './map.js';
 import { initMapFilter, getFilteredData } from './map-filter.js';
 import { showAlert } from './alert.js';
-import { setAddress } from './address.js';
 
 const MAX_SILIMIAR_MARKERS_AMOUNT = 10;
 const DEBOUNCE_TIME = 500;

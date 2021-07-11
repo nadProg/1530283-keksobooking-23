@@ -22,9 +22,3 @@ export const initCheckTime = () => {
   checkInNode.addEventListener('change', onCheckInNodeChange);
   checkOutNode.addEventListener('change', onCheckOutNodeChange);
 };
-
-export const destroyCheckTime = () => {
-  checkInNode.removeEventListener('change', onCheckInNodeChange);
-  checkOutNode.removeEventListener('change', onCheckOutNodeChange);
-};
-

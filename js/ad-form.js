@@ -7,6 +7,7 @@ import { postData } from './api.js';
 import { showModalMessage } from './modal-message.js';
 
 const { adFormNode } = commonNodes;
+const addressNode = adFormNode.querySelector('#address');
 const submitBtnNode = adFormNode.querySelector('.ad-form__submit');
 
 disableForm(adFormNode);
@@ -43,4 +44,8 @@ export const initAdForm = (afterResetCallback) => {
       afterResetCallback();
     });
   }
+};
+
+export const setAddress = ({lat, lng}) => {
+  addressNode.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
 };

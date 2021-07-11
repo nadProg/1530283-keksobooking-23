@@ -22,7 +22,3 @@ const onTypeNodeChange = (evt) => {
 export const initPrice = () => {
   typeNode.addEventListener('change', onTypeNodeChange);
 };
-
-export const destroyPrice = () => {
-  typeNode.removeEventListener('change', onTypeNodeChange);
-};

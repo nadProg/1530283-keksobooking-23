@@ -67,8 +67,3 @@ export const initRoomCapacity = () => {
   roomsNode.addEventListener('change', onRoomsNodeChange);
   capacityNode.addEventListener('change', onCapacityNodeChange);
 };
-
-export const destroyRoomCapacity = () => {
-  roomsNode.removeEventListener('change', onRoomsNodeChange);
-  capacityNode.removeEventListener('change', onCapacityNodeChange);
-};
