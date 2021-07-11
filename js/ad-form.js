@@ -1,4 +1,4 @@
-import { adFormNode, enableForm, disableForm, isFunction } from './utils.js';
+import { adFormNode, enableForm, disableForm, isFunction, roundCoordinate } from './utils.js';
 import { postData } from './api.js';
 import { showModalMessage } from './modal-message.js';
 import * as avatar from './avatar.js';
@@ -17,9 +17,7 @@ const onAdFormSubmit = async (evt) => {
   submitBtnNode.disabled = true;
 
   try {
-    const body = new FormData(adFormNode);
-    await postData(body);
-    await new Promise((resolve) => setTimeout(() => resolve(), 1500));
+    await postData(new FormData(adFormNode));
     adFormNode.reset();
     showModalMessage('success');
   } catch (error) {
@@ -51,5 +49,5 @@ export const initialize = (afterResetCallback) => {
 };
 
 export const setAddress = ({ lat, lng }) => {
-  addressNode.value = `${Number(lat.toFixed(5))}, ${Number(lng.toFixed(5))}`;
+  addressNode.value = `${roundCoordinate(lat)}, ${roundCoordinate(lng)}`;
 };

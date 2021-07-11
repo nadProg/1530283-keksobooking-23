@@ -1,12 +1,12 @@
-import { debounce, sortOffersByDistance } from './utils.js';
+import { debounce, sortOffersByDistance, sliceFromStart } from './utils.js';
 import { getData } from './api.js';
 import { showAlert } from './alert.js';
-import * as adForm from './ad-form.js';
 import * as map from './map.js';
+import * as adForm from './ad-form.js';
 import * as mapFilter from './map-filter.js';
 
-const MAX_SIMILAR_OFFERS_AMOUNT = 10;
 const DEBOUNCE_TIME = 500;
+const MAX_SIMILAR_OFFERS_AMOUNT = 10;
 
 const setCurrentAddress = () => {
   const currentLocation = map.getCurrentLocation();
@@ -25,7 +25,7 @@ const showSimilarOffers = debounce(() => {
       })
       .sort(sortOffersByDistance);
 
-    map.addMarkers(sortedOffers.slice(0, MAX_SIMILAR_OFFERS_AMOUNT));
+    map.addMarkers(sliceFromStart(sortedOffers, MAX_SIMILAR_OFFERS_AMOUNT));
   }
 }, DEBOUNCE_TIME);
 

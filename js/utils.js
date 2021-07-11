@@ -1,4 +1,5 @@
 const ALLOWED_FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+const MAX_COORDINATE_DIGIT = 5;
 
 export const adFormNode = document.body.querySelector('.ad-form');
 
@@ -21,18 +22,14 @@ export const renderNodes = (nodes, container) => {
   container.appendChild(fragment);
 };
 
-export const disableForm = (form) => {
-  form.classList.add(`${form.classList[0]}--disabled`);
-  for (const element of form.elements) {
-    element.disabled = true;
-  }
-};
-
 export const enableForm = (form) => {
   form.classList.remove(`${form.classList[0]}--disabled`);
-  for (const element of form.elements) {
-    element.disabled = false;
-  }
+  Array.from(form.elements).forEach((element) => element.disabled = false);
+};
+
+export const disableForm = (form) => {
+  form.classList.add(`${form.classList[0]}--disabled`);
+  Array.from(form.elements).forEach((element) => element.disabled = true);
 };
 
 const getURLfromFile = (file) => new Promise((resolve, reject) => {
@@ -77,3 +74,7 @@ export const loadImage = (file, imageNode) => getURLfromFile(file)
   }));
 
 export const sortOffersByDistance = (offerA, offerB) => offerA.distance - offerB.distance;
+
+export const roundCoordinate = (coordinate) => Number(coordinate.toFixed(MAX_COORDINATE_DIGIT));
+
+export const sliceFromStart = (items, number) => items.slice(0, number);
