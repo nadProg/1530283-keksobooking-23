@@ -17,9 +17,9 @@ const onAdFormSubmit = async (evt) => {
   submitBtnNode.disabled = true;
 
   try {
-    const body = new FormData(evt.currentTarget);
+    const body = new FormData(adFormNode);
     await postData(body);
-    await new Promise((resolve) => setTimeout(() => resolve()), 1500);
+    await new Promise((resolve) => setTimeout(() => resolve(), 1500));
     adFormNode.reset();
     showModalMessage('success');
   } catch (error) {
@@ -32,20 +32,16 @@ const onAdFormSubmit = async (evt) => {
 export const initAdForm = (afterResetCallback) => {
   enableForm(adFormNode);
   initPrice();
-  initRoomCapacity();
   initCheckTime();
+  initRoomCapacity();
 
   adFormNode.addEventListener('submit', onAdFormSubmit);
 
   if (afterResetCallback) {
-    adFormNode.addEventListener('reset', (evt) => {
-      evt.preventDefault();
-      evt.currentTarget.reset();
-      afterResetCallback();
-    });
+    adFormNode.addEventListener('reset', () => setTimeout(() => afterResetCallback()));
   }
 };
 
-export const setAddress = ({lat, lng}) => {
+export const setAddress = ({ lat, lng }) => {
   addressNode.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
 };
