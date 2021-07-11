@@ -2,20 +2,33 @@ import { enableForm, disableForm } from './utils.js';
 
 const ANY = 'any';
 
-const mapFiltersNode = document.querySelector('.map__filters');
-const filterTypeNode = mapFiltersNode.querySelector('#housing-type');
-const filterPriceNode = mapFiltersNode.querySelector('#housing-price');
-const filterRoomsNode = mapFiltersNode.querySelector('#housing-rooms');
-const filterGuestsNode = mapFiltersNode.querySelector('#housing-guests');
-const filterFeaturesNode = mapFiltersNode.querySelector('#housing-features');
+const FilterPriceValue = {
+  LOW: 'low',
+  MIDDLE: 'middle',
+  HIGH: 'high',
+};
+
+const FilterPriceLimit = {
+  LOW: 10000,
+  HIGH: 50000,
+};
+
+const mapFilterNode = document.querySelector('.map__filters');
+const filterTypeNode = mapFilterNode.querySelector('#housing-type');
+const filterPriceNode = mapFilterNode.querySelector('#housing-price');
+const filterRoomsNode = mapFilterNode.querySelector('#housing-rooms');
+const filterGuestsNode = mapFilterNode.querySelector('#housing-guests');
+const filterFeaturesNode = mapFilterNode.querySelector('#housing-features');
 
 let initialData = null;
 let filteredData = null;
 
-disableForm(mapFiltersNode);
+disableForm(mapFilterNode);
+
+const isAny = (value) => value === ANY;
 
 const filterDatum = ({ offer }) => {
-  if (filterTypeNode.value !== ANY) {
+  if (!isAny(filterTypeNode.value)) {
     const isMatch = filterTypeNode.value === offer.type;
 
     if (!isMatch) {
@@ -23,19 +36,19 @@ const filterDatum = ({ offer }) => {
     }
   }
 
-  if (filterPriceNode.value !== ANY) {
+  if (!isAny(filterPriceNode.value)) {
     let isMatch = true;
-    const price = Number(offer.price);
+    const offerPrice = Number(offer.price);
 
     switch (filterPriceNode.value) {
-      case 'low':
-        isMatch = price < 10000;
+      case FilterPriceValue.LOW:
+        isMatch = offerPrice < FilterPriceLimit.LOW;
         break;
-      case 'middle':
-        isMatch = price >= 10000 && price < 50000;
+      case FilterPriceValue.MIDDLE:
+        isMatch = offerPrice >= FilterPriceLimit.LOW && offerPrice < FilterPriceLimit.HIGH;
         break;
-      case 'high':
-        isMatch = price >= 50000;
+      case FilterPriceValue.HIGH:
+        isMatch = offerPrice >= FilterPriceLimit.HIGH;
         break;
     }
 
@@ -44,7 +57,7 @@ const filterDatum = ({ offer }) => {
     }
   }
 
-  if (filterRoomsNode.value !== ANY) {
+  if (!isAny(filterRoomsNode.value)) {
     const isMatch = offer.rooms === Number(filterRoomsNode.value);
 
     if (!isMatch) {
@@ -52,7 +65,7 @@ const filterDatum = ({ offer }) => {
     }
   }
 
-  if (filterGuestsNode.value !== ANY) {
+  if (!isAny(filterGuestsNode.value)) {
     const isMatch = offer.guests === Number(filterGuestsNode.value);
 
     if (!isMatch) {
@@ -60,11 +73,13 @@ const filterDatum = ({ offer }) => {
     }
   }
 
-  const checkedFilterFeatureNodes = filterFeaturesNode.querySelectorAll(':checked');
-
+  const checkedFilterFeatureNodes = Array.from(filterFeaturesNode.querySelectorAll(':checked'));
   if (checkedFilterFeatureNodes.length) {
     const features = new Set(offer.features);
-    const isMatch = Array.from(checkedFilterFeatureNodes).map((node) => node.value).every((value) => features.has(value));
+
+    const isMatch = checkedFilterFeatureNodes
+      .map((node) => node.value)
+      .every((value) => features.has(value));
 
     if (!isMatch) {
       return false;
@@ -74,21 +89,19 @@ const filterDatum = ({ offer }) => {
   return true;
 };
 
-export const initMapFilter = (data, cb) => {
+export const initMapFilter = (data, callback) => {
   initialData = data;
-  enableForm(mapFiltersNode);
+  enableForm(mapFilterNode);
 
-  mapFiltersNode.addEventListener('change', () => {
+  mapFilterNode.addEventListener('change', () => {
     filteredData = initialData.filter(filterDatum);
 
-    console.log(filteredData);
-
-    if (cb) {
-      cb(filteredData);
+    if (callback) {
+      callback(filteredData);
     }
   });
 
-  mapFiltersNode.dispatchEvent(new Event('change'));
+  mapFilterNode.dispatchEvent(new Event('change'));
 };
 
-export const getFilteredData = () => [...filteredData];
+export const getFilteredData = () => filteredData;
