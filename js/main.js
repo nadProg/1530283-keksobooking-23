@@ -5,7 +5,6 @@ import * as map from './map.js';
 import * as adForm from './ad-form.js';
 import * as mapFilter from './map-filter.js';
 
-const DEBOUNCE_TIME = 500;
 const MAX_SIMILAR_OFFERS_AMOUNT = 10;
 
 const setCurrentAddress = () => adForm.setAddress(map.getCurrentLocation());
@@ -23,7 +22,7 @@ const showSimilarOffers = debounce(() => {
 
     map.addMarkers(sliceFromStart(sortedOffers, MAX_SIMILAR_OFFERS_AMOUNT));
   }
-}, DEBOUNCE_TIME);
+});
 
 const afterMapFilterNodeChange = () => {
   showSimilarOffers();
@@ -40,7 +39,7 @@ const afterAdFormNodeReset = () => {
   mapFilter.reset();
 };
 
-const start = async () => {
+const initialize = async () => {
   try {
     await map.initialize(onMainMarkerMove);
     adForm.initialize(afterAdFormNodeReset);
@@ -56,4 +55,4 @@ const start = async () => {
   }
 };
 
-start();
+initialize();

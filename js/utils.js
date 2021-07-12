@@ -1,26 +1,33 @@
-const ALLOWED_FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 const MAX_COORDINATE_DIGIT = 5;
+const DEFAULT_DEBOUNCE_TIME = 500;
+const ALLOWED_FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
 export const adFormNode = document.body.querySelector('.ad-form');
 
-export const debounce = (cb, time = 500) => {
-  let timeoutId;
-
-  return function () {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => cb.apply(this, arguments), time);
-  };
+export const renderNodes = (nodes, containerNode) => {
+  const fragment = document.createDocumentFragment();
+  nodes.forEach((node) => fragment.appendChild(node));
+  containerNode.appendChild(fragment);
 };
 
 export const isEscape = ({ code }) => code === 'Escape';
 
 export const isFunction = (func) => typeof func === 'function';
 
-export const renderNodes = (nodes, container) => {
-  const fragment = document.createDocumentFragment();
-  nodes.forEach((node) => fragment.appendChild(node));
-  container.appendChild(fragment);
+export const debounce = (callback, time = DEFAULT_DEBOUNCE_TIME) => {
+  let timeoutId;
+
+  return function () {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, arguments), time);
+  };
 };
+
+export const sliceFromStart = (items, number) => items.slice(0, number);
+
+export const sortOffersByDistance = (offerA, offerB) => offerA.distance - offerB.distance;
+
+export const roundCoordinate = (coordinate) => Number(coordinate.toFixed(MAX_COORDINATE_DIGIT));
 
 export const enableForm = (form) => {
   form.classList.remove(`${form.classList[0]}--disabled`);
@@ -72,9 +79,3 @@ export const loadImage = (file, imageNode) => getURLfromFile(file)
       reject(new Error('Image load error'));
     }
   }));
-
-export const sortOffersByDistance = (offerA, offerB) => offerA.distance - offerB.distance;
-
-export const roundCoordinate = (coordinate) => Number(coordinate.toFixed(MAX_COORDINATE_DIGIT));
-
-export const sliceFromStart = (items, number) => items.slice(0, number);
