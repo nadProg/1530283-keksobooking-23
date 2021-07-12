@@ -18,7 +18,7 @@ const filterTypeNode = mapFilterNode.querySelector('#housing-type');
 const filterPriceNode = mapFilterNode.querySelector('#housing-price');
 const filterRoomsNode = mapFilterNode.querySelector('#housing-rooms');
 const filterGuestsNode = mapFilterNode.querySelector('#housing-guests');
-const filterFeaturesNode = mapFilterNode.querySelector('#housing-features');
+const filterFeatureNodes = Array.from(mapFilterNode.querySelectorAll('.map__checkbox'));
 
 let initialOffers = null;
 let filteredOffers = null;
@@ -27,66 +27,74 @@ disableForm(mapFilterNode);
 
 const isAny = (value) => value === ANY;
 
-const filterOffers = ({ offer }) => {
-  if (!isAny(filterTypeNode.value)) {
-    const isMatch = filterTypeNode.value === offer.type;
+const filterOffers = (offers) => {
+  const filterTypeValue = filterTypeNode.value;
+  const filterPriceValue = filterPriceNode.value;
+  const filterRoomsValue = filterRoomsNode.value;
+  const filterGuestsValue = filterGuestsNode.value;
+  const filterFeatureValues = Array.from(
+    filterFeatureNodes
+      .filter(({ checked }) => checked)
+      .map(({ value }) => value),
+  );
 
-    if (!isMatch) {
-      return false;
-    }
-  }
+  return offers.filter(({ offer}) => {
+    if (!isAny(filterTypeValue)) {
+      const isMatch = filterTypeValue === offer.type;
 
-  if (!isAny(filterPriceNode.value)) {
-    let isMatch = true;
-    const offerPrice = Number(offer.price);
-
-    switch (filterPriceNode.value) {
-      case FilterPriceValue.LOW:
-        isMatch = offerPrice < FilterPriceLimit.LOW;
-        break;
-      case FilterPriceValue.MIDDLE:
-        isMatch = offerPrice >= FilterPriceLimit.LOW && offerPrice < FilterPriceLimit.HIGH;
-        break;
-      case FilterPriceValue.HIGH:
-        isMatch = offerPrice >= FilterPriceLimit.HIGH;
-        break;
+      if (!isMatch) {
+        return false;
+      }
     }
 
-    if (!isMatch) {
-      return false;
+    if (!isAny(filterPriceValue)) {
+      let isMatch = true;
+      const offerPrice = Number(offer.price);
+
+      switch (filterPriceValue) {
+        case FilterPriceValue.LOW:
+          isMatch = offerPrice < FilterPriceLimit.LOW;
+          break;
+        case FilterPriceValue.MIDDLE:
+          isMatch = offerPrice >= FilterPriceLimit.LOW && offerPrice < FilterPriceLimit.HIGH;
+          break;
+        case FilterPriceValue.HIGH:
+          isMatch = offerPrice >= FilterPriceLimit.HIGH;
+          break;
+      }
+
+      if (!isMatch) {
+        return false;
+      }
     }
-  }
 
-  if (!isAny(filterRoomsNode.value)) {
-    const isMatch = offer.rooms === Number(filterRoomsNode.value);
+    if (!isAny(filterRoomsValue)) {
+      const isMatch = offer.rooms === Number(filterRoomsValue);
 
-    if (!isMatch) {
-      return false;
+      if (!isMatch) {
+        return false;
+      }
     }
-  }
 
-  if (!isAny(filterGuestsNode.value)) {
-    const isMatch = offer.guests === Number(filterGuestsNode.value);
+    if (!isAny(filterGuestsValue)) {
+      const isMatch = offer.guests === Number(filterGuestsValue);
 
-    if (!isMatch) {
-      return false;
+      if (!isMatch) {
+        return false;
+      }
     }
-  }
 
-  const checkedFilterFeatureNodes = Array.from(filterFeaturesNode.querySelectorAll(':checked'));
-  if (checkedFilterFeatureNodes.length) {
-    const features = new Set(offer.features);
+    if (filterFeatureValues.length) {
+      const features = new Set(offer.features);
+      const isMatch = filterFeatureValues.every((value) => features.has(value));
 
-    const isMatch = checkedFilterFeatureNodes
-      .map((node) => node.value)
-      .every((value) => features.has(value));
-
-    if (!isMatch) {
-      return false;
+      if (!isMatch) {
+        return false;
+      }
     }
-  }
 
-  return true;
+    return true;
+  });
 };
 
 const initialize = (offers, afterMapFilterNodeChange) => {
@@ -94,7 +102,7 @@ const initialize = (offers, afterMapFilterNodeChange) => {
   enableForm(mapFilterNode);
 
   mapFilterNode.addEventListener('change', () => {
-    filteredOffers = initialOffers.filter(filterOffers);
+    filteredOffers = filterOffers(initialOffers);
 
     if (isFunction(afterMapFilterNodeChange)) {
       afterMapFilterNodeChange();
