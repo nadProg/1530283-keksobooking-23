@@ -8,22 +8,18 @@ import * as mapFilter from './map-filter.js';
 const DEBOUNCE_TIME = 500;
 const MAX_SIMILAR_OFFERS_AMOUNT = 10;
 
-const setCurrentAddress = () => {
-  const currentLocation = map.getCurrentLocation();
-  adForm.setAddress(currentLocation);
-};
+const setCurrentAddress = () => adForm.setAddress(map.getCurrentLocation());
 
 const showSimilarOffers = debounce(() => {
   const filteredOffers = mapFilter.getFilteredOffers();
 
   if (filteredOffers) {
     const currentLocation = map.getCurrentLocation();
-    const sortedOffers = filteredOffers
-      .map((offer) => {
-        const location = L.latLng(offer.location);
-        return {...offer, distance: Math.round(currentLocation.distanceTo(location))};
-      })
-      .sort(sortOffersByDistance);
+    const sortedOffers = filteredOffers.map((offer) => {
+      const location = L.latLng(offer.location);
+      const distance = Math.round(currentLocation.distanceTo(location));
+      return { ...offer, distance};
+    }).sort(sortOffersByDistance);
 
     map.addMarkers(sliceFromStart(sortedOffers, MAX_SIMILAR_OFFERS_AMOUNT));
   }
