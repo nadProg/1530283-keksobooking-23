@@ -1,6 +1,6 @@
 import { renderNodes } from './utils.js';
 
-const offerTypes = {
+const typesToTextContent = {
   flat: 'Квартира',
   bungalow: 'Бунгало',
   house: 'Дом',
@@ -14,14 +14,12 @@ const photoTemplateNode = popupTemplateNode.querySelector('.popup__photo');
 const createPhotoNode = (photo) => {
   const photoNode = photoTemplateNode.cloneNode(true);
   photoNode.src = photo;
-
   return photoNode;
 };
 
 const createFeatureNode = (featureType) => {
   const featureNode = document.createElement('li');
   featureNode.classList.add('popup__feature', `popup__feature--${featureType}`);
-
   return featureNode;
 };
 
@@ -30,12 +28,11 @@ export const createPopupNode = ({ author, offer }) => {
 
   popupNode.querySelector('.popup__avatar').src = author.avatar;
   popupNode.querySelector('.popup__title').textContent = offer.title;
-  popupNode.querySelector('.popup__type').textContent = offerTypes[offer.type];
+  popupNode.querySelector('.popup__type').textContent = typesToTextContent[offer.type];
   popupNode.querySelector('.popup__text--price').textContent = `${offer.price} ₽/ночь`;
   popupNode.querySelector('.popup__text--address').textContent = offer.address;
   popupNode.querySelector('.popup__text--capacity').textContent = `${offer.rooms} комнаты для ${offer.guests} гостей`;
   popupNode.querySelector('.popup__text--time').textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`;
-  popupNode.querySelector('.popup__description').textContent = offer.description;
 
   const featuresContainerNode = popupNode.querySelector('.popup__features');
   if (offer.features) {
@@ -44,6 +41,13 @@ export const createPopupNode = ({ author, offer }) => {
     renderNodes(featureNodes, featuresContainerNode);
   } else {
     featuresContainerNode.remove();
+  }
+
+  const descriptionNode = popupNode.querySelector('.popup__description');
+  if (offer.description) {
+    descriptionNode.textContent = offer.description;
+  } else {
+    descriptionNode.remove();
   }
 
   const photosContainerNode = popupNode.querySelector('.popup__photos');
