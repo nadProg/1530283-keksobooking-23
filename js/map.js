@@ -44,31 +44,31 @@ let map = null;
 let mainMarker = null;
 let markerGroup = null;
 
-const finishInitialization = (afterMainMarkerMoveCallback) => {
+const finishInitialization = (onMainMarkerMove) => {
   markerGroup = L.layerGroup().addTo(map);
   mainMarker = L.marker(INITIAL_VIEW, mainMarkerOptions).addTo(map);
 
-  if (isFunction(afterMainMarkerMoveCallback)) {
-    mainMarker.on('move', afterMainMarkerMoveCallback);
+  if (isFunction(onMainMarkerMove)) {
+    mainMarker.on('move', onMainMarkerMove);
   }
 };
 
-const loadTileLayer = (afterMainMarkerMoveCallback) => new Promise((resolve, reject) => {
+const loadTileLayer = (onMainMarkerMove) => new Promise((resolve, reject) => {
   L.tileLayer(TILE_LAYER_URL, { attribution: TILE_LAYER_ATTRIBUTION })
     .on('load', async (evt) => {
       evt.target.off();
-      finishInitialization(afterMainMarkerMoveCallback);
+      finishInitialization(onMainMarkerMove);
       resolve();
     })
     .on('tileerror', () => reject(new Error('Map initialization error')))
     .addTo(map);
 });
 
-const initialize = (afterMainMarkerMoveCallback) => new Promise((resolve, reject) => {
+const initialize = (onMainMarkerMove) => new Promise((resolve, reject) => {
   map = L.map('map-canvas');
   map.on('load', async () => {
     try {
-      await loadTileLayer(afterMainMarkerMoveCallback);
+      await loadTileLayer(onMainMarkerMove);
       resolve();
     } catch (error) {
       reject(error);

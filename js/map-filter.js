@@ -89,15 +89,15 @@ const filterOffers = ({ offer }) => {
   return true;
 };
 
-const initialize = (offers, afterChangeCallback) => {
+const initialize = (offers, afterMapFilterNodeChange) => {
   initialOffers = offers;
   enableForm(mapFilterNode);
 
   mapFilterNode.addEventListener('change', () => {
     filteredOffers = initialOffers.filter(filterOffers);
 
-    if (isFunction(afterChangeCallback)) {
-      afterChangeCallback();
+    if (isFunction(afterMapFilterNodeChange)) {
+      afterMapFilterNodeChange();
     }
   });
 

@@ -32,7 +32,7 @@ const onAdFormReset = () => {
   avatar.reset();
 };
 
-export const initialize = (afterResetCallback) => {
+export const initialize = (afterAdFormNodeReset) => {
   enableForm(adFormNode);
   photo.initialize();
   avatar.initialize();
@@ -43,9 +43,11 @@ export const initialize = (afterResetCallback) => {
   adFormNode.addEventListener('submit', onAdFormSubmit);
   adFormNode.addEventListener('reset', onAdFormReset);
 
-  if (isFunction(afterResetCallback)) {
-    adFormNode.addEventListener('reset', () => setTimeout(() => afterResetCallback()));
+  if (isFunction(afterAdFormNodeReset)) {
+    adFormNode.addEventListener('reset', () => setTimeout(() => afterAdFormNodeReset()));
   }
+
+  adFormNode.reset();
 };
 
 export const setAddress = ({ lat, lng }) => {

@@ -29,31 +29,29 @@ const showSimilarOffers = debounce(() => {
   }
 }, DEBOUNCE_TIME);
 
-// Именование ?
-const afterMapFilterChange = () => {
+const afterMapFilterNodeChange = () => {
   showSimilarOffers();
   map.setViewToCurrentLocation();
 };
 
-const afterMainMarkerMove = () => {
+const onMainMarkerMove = () => {
   setCurrentAddress();
   showSimilarOffers();
 };
 
-const afterAdFormReset = () => {
+const afterAdFormNodeReset = () => {
   map.reset();
   mapFilter.reset();
 };
 
 const start = async () => {
   try {
-    await map.initialize(afterMainMarkerMove);
-    adForm.initialize(afterAdFormReset);
-    setCurrentAddress();
+    await map.initialize(onMainMarkerMove);
+    adForm.initialize(afterAdFormNodeReset);
 
     try {
-      const data = await getData();
-      mapFilter.initialize(data, afterMapFilterChange);
+      const offers = await getData();
+      mapFilter.initialize(offers, afterMapFilterNodeChange);
     } catch (error) {
       showAlert('Ошибка загрузки данных с сервера');
     }
