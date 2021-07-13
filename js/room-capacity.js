@@ -1,5 +1,8 @@
 import { adFormNode } from './utils.js';
 
+const VALID_MESSAGE = '';
+const INVALID_MESSAGE = 'Данное количество недоступно для выбранного количества комнат';
+
 const RoomsValue = {
   ONE: 1,
   TWO: 2,
@@ -8,10 +11,10 @@ const RoomsValue = {
 };
 
 const CapacityValue = {
-  THREE: 3,
-  TWO: 2,
-  ONE: 1,
   NONE: 0,
+  ONE: 1,
+  TWO: 2,
+  THREE: 3,
 };
 
 const roomsValueToCapacityValues = {
@@ -31,23 +34,16 @@ for (const capacityOptionNode of capacityNode.options) {
   capacityValueToNode[value] = capacityOptionNode;
 }
 
-let currentCapacityValues = [];
+let currentCapacityValues = [CapacityValue.ONE];
 
 const getCapacityValidity = () => {
-  const roomsValue = roomsNode.value;
-  const capacityValue = capacityNode.value;
-
-  const isValid = roomsValueToCapacityValues[roomsValue].includes(capacityValue);
-
-  return isValid ? '' : 'Данное количество недоступно для выбранного количества комнат';
+  const isValueDisabled = capacityValueToNode[capacityNode.value].disabled;
+  return isValueDisabled ? INVALID_MESSAGE : VALID_MESSAGE;
 };
 
 const onRoomsNodeChange = () => {
-  const roomsValue = roomsNode.value;
-
   currentCapacityValues.forEach((value) => capacityValueToNode[value].disabled = true);
-
-  currentCapacityValues = roomsValueToCapacityValues[roomsValue];
+  currentCapacityValues = roomsValueToCapacityValues[roomsNode.value];
   currentCapacityValues.forEach((value) => capacityValueToNode[value].disabled = false);
 
   capacityNode.setCustomValidity(getCapacityValidity());
@@ -58,6 +54,7 @@ const onCapacityNodeChange = () => {
 };
 
 export const initialize = () => {
+  currentCapacityValues = [CapacityValue.ONE];
   roomsNode.addEventListener('change', onRoomsNodeChange);
   capacityNode.addEventListener('change', onCapacityNodeChange);
 };
