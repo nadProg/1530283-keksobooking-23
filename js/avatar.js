@@ -1,4 +1,5 @@
-import { adFormNode, loadImage } from './utils.js';
+import { adFormNode } from './utils.js';
+import { loadImage } from './image.js';
 import * as alert from './alert.js';
 
 const DEFAULT_AVATAR = 'img/muffin-grey.svg';

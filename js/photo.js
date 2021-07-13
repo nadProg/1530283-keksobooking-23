@@ -1,4 +1,5 @@
-import { adFormNode, loadImage, renderNodes } from './utils.js';
+import { adFormNode, renderNodes } from './utils.js';
+import { loadImage } from './image.js';
 import * as alert from './alert.js';
 
 const PHOTO_CLASS = 'ad-form__photo';
