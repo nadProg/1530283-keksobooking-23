@@ -23,7 +23,6 @@ const onAdFormSubmit = async (evt) => {
     adFormNode.reset();
     showModalMessage('success');
   } catch (error) {
-    console.log(error);
     showModalMessage('error');
   }
 
