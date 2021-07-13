@@ -12,7 +12,7 @@ const createAlertNode = (text) => {
 
 const onAlertNodeAnimationEnd = ({ currentTarget }) => currentTarget.remove();
 
-export const showAlert = (text, time = DEFAULT_ALERT_TIME) => {
+const show = (text, time = DEFAULT_ALERT_TIME) => {
   const alertNode = createAlertNode(text);
 
   alertNode.style.animationDuration = `${time}ms`;
@@ -21,9 +21,11 @@ export const showAlert = (text, time = DEFAULT_ALERT_TIME) => {
   document.body.appendChild(alertNode);
 };
 
-export const hideAlert = () => {
+const hide = () => {
   const alertNode = document.body.querySelector('.alert');
   if (alertNode) {
     alertNode.remove();
   }
 };
+
+export { show, hide };

@@ -1,5 +1,5 @@
 import { adFormNode, loadImage } from './utils.js';
-import { showAlert, hideAlert } from './alert.js';
+import * as alert from './alert.js';
 
 const DEFAULT_AVATAR = 'img/muffin-grey.svg';
 
@@ -8,7 +8,7 @@ const avatarImageNode = adFormNode.querySelector('.ad-form-header__preview img')
 
 const reset = () => avatarImageNode.src = DEFAULT_AVATAR;
 
-const onAvatartNodeClick = () => hideAlert();
+const onAvatartNodeClick = () => alert.hide();
 
 const onAvatarInputNodeChange = async () => {
   const file = avatarInputNode.files[0];
@@ -23,7 +23,7 @@ const onAvatarInputNodeChange = async () => {
   } catch (error) {
     reset();
     avatarInputNode.value = '';
-    showAlert('Ошибка загрузки фото');
+    alert.show('Ошибка загрузки фото');
   }
 };
 

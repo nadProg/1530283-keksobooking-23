@@ -1,5 +1,5 @@
 import { adFormNode, loadImage, renderNodes } from './utils.js';
-import { showAlert, hideAlert } from './alert.js';
+import * as alert from './alert.js';
 
 const PHOTO_CLASS = 'ad-form__photo';
 
@@ -38,7 +38,7 @@ const reset = () => {
   photoContainerNode.appendChild(emptyPhotoNode);
 };
 
-const onPhotoNodeClick = () => hideAlert();
+const onPhotoNodeClick = () => alert.hide();
 
 const onPhotoInputNodeChange = async () => {
   const files = Array.from(photoInputNode.files);
@@ -54,7 +54,7 @@ const onPhotoInputNodeChange = async () => {
   } catch (error) {
     reset();
     photoInputNode.value = '';
-    showAlert('Ошибка загрузки фото');
+    alert.show('Ошибка загрузки фото');
   }
 };
 

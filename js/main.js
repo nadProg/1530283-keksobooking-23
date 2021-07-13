@@ -1,6 +1,6 @@
 import { debounce, sortOffersByDistance, sliceFromStart } from './utils.js';
 import { getData } from './api.js';
-import { showAlert } from './alert.js';
+import { show as showAlert } from './alert.js';
 import * as map from './map.js';
 import * as adForm from './ad-form.js';
 import * as mapFilter from './map-filter.js';

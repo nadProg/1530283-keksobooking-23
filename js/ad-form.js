@@ -1,6 +1,8 @@
-import { adFormNode, enableForm, disableForm, isFunction, roundCoordinate } from './utils.js';
+import {
+  adFormNode, enableForm, disableForm, isFunction, roundCoordinate
+} from './utils.js';
 import { postData } from './api.js';
-import { showModalMessage } from './modal-message.js';
+import { show as showModalMessage } from './modal-message.js';
 import * as avatar from './avatar.js';
 import * as photo from './photo.js';
 import * as price from './price.js';
@@ -21,6 +23,7 @@ const onAdFormSubmit = async (evt) => {
     adFormNode.reset();
     showModalMessage('success');
   } catch (error) {
+    console.log(error);
     showModalMessage('error');
   }
 
@@ -32,7 +35,7 @@ const onAdFormReset = () => {
   avatar.reset();
 };
 
-export const initialize = (afterAdFormNodeReset) => {
+const initialize = (afterAdFormNodeReset) => {
   enableForm(adFormNode);
   photo.initialize();
   avatar.initialize();
@@ -44,12 +47,16 @@ export const initialize = (afterAdFormNodeReset) => {
   adFormNode.addEventListener('reset', onAdFormReset);
 
   if (isFunction(afterAdFormNodeReset)) {
-    adFormNode.addEventListener('reset', () => setTimeout(() => afterAdFormNodeReset()));
+    adFormNode.addEventListener('reset', () => {
+      setTimeout(() => afterAdFormNodeReset());
+    });
   }
 
   adFormNode.reset();
 };
 
-export const setAddress = ({ lat, lng }) => {
+const setAddress = ({ lat, lng }) => {
   addressNode.value = `${roundCoordinate(lat)}, ${roundCoordinate(lng)}`;
 };
+
+export { initialize, setAddress };

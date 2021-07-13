@@ -5,14 +5,12 @@ const successTemplateNode = document.querySelector('#success').content.querySele
 
 let currentMessage = null;
 
-const onDocumentClick = () => {
-  hideModalMessage();
-};
+const onDocumentClick = () => hide();
 
 const onDocumentKeydown = (evt) => {
   if (isEscape(evt)) {
     evt.preventDefault();
-    hideModalMessage();
+    hide();
   }
 };
 
@@ -23,7 +21,7 @@ const createMessage = (type) => {
   return messageNode;
 };
 
-function hideModalMessage() {
+function hide() {
   if (currentMessage) {
     currentMessage.remove();
     currentMessage = null;
@@ -33,9 +31,9 @@ function hideModalMessage() {
   }
 }
 
-export function showModalMessage(type) {
+export function show(type) {
   if (currentMessage) {
-    hideModalMessage();
+    hide();
   }
 
   currentMessage = createMessage(type);
