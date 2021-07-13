@@ -26,9 +26,9 @@ const fetchData = async (method, body) => {
     throw new Error(`${response.status} — ${response.statusText}`);
   }
 
-  return (await response.json()).map(adoptData);
+  return response.json();
 };
 
-export const getData = () => fetchData('GET');
+export const getData = async () => (await fetchData('GET')).map(adoptData);
 
-export const postData = (body) => fetchData('POST', body);
+export const postData = async (body) => fetchData('POST', body);
