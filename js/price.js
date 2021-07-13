@@ -11,12 +11,14 @@ const typeToMinPrice = {
 const typeNode = adFormNode.querySelector('#type');
 const priceNode = adFormNode.querySelector('#price');
 
-const onTypeNodeChange = (evt) => {
-  const minPrice = typeToMinPrice[evt.currentTarget.value];
+const onTypeNodeChange = () => {
+  const minPrice = typeToMinPrice[typeNode.value];
   priceNode.min = minPrice;
   priceNode.placeholder = minPrice;
 };
 
-export const initialize = () => {
+const initialize = () => {
   typeNode.addEventListener('change', onTypeNodeChange);
 };
+
+export { initialize };
