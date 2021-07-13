@@ -1,6 +1,7 @@
 import { enableForm, disableForm, isFunction } from './utils.js';
 
 const FilterPriceValue = {
+  ANY: 'any',
   LOW: 'low',
   MIDDLE: 'middle',
   HIGH: 'high',
@@ -37,6 +38,41 @@ const getFilterValues = () => ({
   ),
 });
 
+const isDefaultMatch =  (filterValue, offerValue) => {
+  offerValue = String(offerValue);
+  return isAny(filterValue) || filterValue === offerValue;
+};
+
+const isTypeMatch = isDefaultMatch;
+
+const isRoomMatch = isDefaultMatch;
+
+const isGuestMatch = isDefaultMatch;
+
+const isPriceMatch = (filterValue, offerValue) => {
+  offerValue = Number(offerValue);
+  switch (filterValue) {
+    case FilterPriceValue.ANY:
+      return true;
+    case FilterPriceValue.LOW:
+      return offerValue < FilterPriceLimit.LOW;
+    case FilterPriceValue.MIDDLE:
+      return offerValue >= FilterPriceLimit.LOW && offerValue < FilterPriceLimit.HIGH;
+    case FilterPriceValue.HIGH:
+      return offerValue >= FilterPriceLimit.HIGH;
+  }
+};
+
+const isFeaturesMatch =  (filterValues, offerValues) => {
+  if (!filterValues.length) {
+    return true;
+  }
+
+  offerValues = new Set(offerValues);
+
+  return filterValues.every((value) => offerValues.has(value));
+};
+
 const filterOffer = ({ offer }) => {
   const {
     type,
@@ -46,47 +82,11 @@ const filterOffer = ({ offer }) => {
     features,
   } = getFilterValues();
 
-  if (!isAny(type) && !(type === offer.type)) {
-    return false;
-  }
-
-  if (!isAny(price)) {
-    let isMatch = true;
-    const offerPrice = Number(offer.price);
-
-    switch (price) {
-      case FilterPriceValue.LOW:
-        isMatch = offerPrice < FilterPriceLimit.LOW;
-        break;
-      case FilterPriceValue.MIDDLE:
-        isMatch = offerPrice >= FilterPriceLimit.LOW && offerPrice < FilterPriceLimit.HIGH;
-        break;
-      case FilterPriceValue.HIGH:
-        isMatch = offerPrice >= FilterPriceLimit.HIGH;
-        break;
-    }
-
-    if (!isMatch) {
-      return false;
-    }
-  }
-
-  if (!isAny(room) && !(Number(room) === offer.rooms)) {
-    return false;
-  }
-
-  if (!isAny(guest) && !(Number(guest) === offer.guests)) {
-    return false;
-  }
-
-  if (features.length) {
-    const offerFeatures = new Set(offer.features);
-    if (!features.every((feature) => offerFeatures.has(feature))) {
-      return false;
-    }
-  }
-
-  return true;
+  return (isTypeMatch(type, offer.type) &&
+    isPriceMatch(price, offer.price) &&
+    isRoomMatch(room, offer.rooms) &&
+    isGuestMatch(guest, offer.guests) &&
+    isFeaturesMatch(features, offer.features));
 };
 
 const initialize = (offers, afterMapFilterNodeChange) => {
