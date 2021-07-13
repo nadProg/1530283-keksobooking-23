@@ -10,51 +10,52 @@ const RoomsValue = {
   HUNDRED: 100,
 };
 
-const CapacityValue = {
+const GuestsValue = {
   NONE: 0,
   ONE: 1,
   TWO: 2,
   THREE: 3,
 };
 
-const roomsValueToCapacityValues = {
-  [RoomsValue.ONE]: [CapacityValue.ONE],
-  [RoomsValue.TWO]: [CapacityValue.ONE, CapacityValue.TWO],
-  [RoomsValue.THREE]: [CapacityValue.ONE, CapacityValue.TWO, CapacityValue.THREE],
-  [RoomsValue.HUNDRED]: [CapacityValue.NONE],
+const roomsValueToEnabledGuestsValues = {
+  [RoomsValue.ONE]: [GuestsValue.ONE],
+  [RoomsValue.TWO]: [GuestsValue.ONE, GuestsValue.TWO],
+  [RoomsValue.THREE]: [GuestsValue.ONE, GuestsValue.TWO, GuestsValue.THREE],
+  [RoomsValue.HUNDRED]: [GuestsValue.NONE],
 
 };
 
 const roomsNode = adFormNode.querySelector('#room_number');
-const capacityNode = adFormNode.querySelector('#capacity');
+const guestsNode = adFormNode.querySelector('#capacity');
 
-const capacityValueToNode = {};
-for (const capacityOptionNode of capacityNode.options) {
+const guestsValueToGuestsNode = {};
+for (const capacityOptionNode of guestsNode.options) {
   const { value } = capacityOptionNode;
-  capacityValueToNode[value] = capacityOptionNode;
+  guestsValueToGuestsNode[value] = capacityOptionNode;
 }
 
-let currentCapacityValues = [CapacityValue.ONE];
+let enabledGuestsValues = [GuestsValue.ONE];
 
-const getCapacityValidity = () => {
-  const isValueDisabled = capacityValueToNode[capacityNode.value].disabled;
-  return isValueDisabled ? INVALID_MESSAGE : VALID_MESSAGE;
+const setGuestsValidity = () => {
+  const chosenRoomsNode = guestsValueToGuestsNode[guestsNode.value];
+  const validity = chosenRoomsNode.disabled ? INVALID_MESSAGE : VALID_MESSAGE;
+  guestsNode.setCustomValidity(validity);
 };
 
 const onRoomsNodeChange = () => {
-  currentCapacityValues.forEach((value) => capacityValueToNode[value].disabled = true);
-  currentCapacityValues = roomsValueToCapacityValues[roomsNode.value];
-  currentCapacityValues.forEach((value) => capacityValueToNode[value].disabled = false);
+  enabledGuestsValues.forEach((value) => guestsValueToGuestsNode[value].disabled = true);
+  enabledGuestsValues = roomsValueToEnabledGuestsValues[roomsNode.value];
+  enabledGuestsValues.forEach((value) => guestsValueToGuestsNode[value].disabled = false);
 
-  capacityNode.setCustomValidity(getCapacityValidity());
+  setGuestsValidity();
 };
 
-const onCapacityNodeChange = () => {
-  capacityNode.setCustomValidity('');
-};
+const onGuestsNodeChange = () => guestsNode.setCustomValidity(VALID_MESSAGE);
 
-export const initialize = () => {
-  currentCapacityValues = [CapacityValue.ONE];
+const initialize = () => {
+  enabledGuestsValues = [GuestsValue.ONE];
   roomsNode.addEventListener('change', onRoomsNodeChange);
-  capacityNode.addEventListener('change', onCapacityNodeChange);
+  guestsNode.addEventListener('change', onGuestsNodeChange);
 };
+
+export { initialize };
