@@ -15,8 +15,8 @@ const FilterPriceLimit = {
 const mapFilterNode = document.querySelector('.map__filters');
 const filterTypeNode = mapFilterNode.querySelector('#housing-type');
 const filterPriceNode = mapFilterNode.querySelector('#housing-price');
-const filterRoomNode = mapFilterNode.querySelector('#housing-rooms');
-const filterGuestNode = mapFilterNode.querySelector('#housing-guests');
+const filterRoomsNode = mapFilterNode.querySelector('#housing-rooms');
+const filterGuestsNode = mapFilterNode.querySelector('#housing-guests');
 const filterFeatureNodes = Array.from(mapFilterNode.querySelectorAll('.map__checkbox'));
 
 let filter  = {
@@ -26,6 +26,7 @@ let filter  = {
   guestsAmount: null,
   features: null,
 };
+
 let initialOffers = null;
 let filteredOffers = null;
 
@@ -35,8 +36,8 @@ const updateFilterValue = () => {
   filter = {
     type: filterTypeNode.value,
     price: filterPriceNode.value,
-    roomsAmount: filterRoomNode.value,
-    guestsAmount: filterGuestNode.value,
+    roomsAmount: filterRoomsNode.value,
+    guestsAmount: filterGuestsNode.value,
     features: Array.from(
       filterFeatureNodes
         .filter(({ checked }) => checked)
@@ -45,10 +46,7 @@ const updateFilterValue = () => {
   };
 };
 
-const isDefaultMatch =  (filterValue, offerValue) => {
-  offerValue = String(offerValue);
-  return isAny(filterValue) || filterValue === offerValue;
-};
+const isDefaultMatch =  (filterValue, offerValue) => isAny(filterValue) || filterValue === String(offerValue);
 
 const isTypeMatch = (offerType) => isDefaultMatch(filter.type, offerType);
 
@@ -57,7 +55,6 @@ const isRoomsAmountMatch = (offerRoomsAmount) => isDefaultMatch(filter.roomsAmou
 const isGuestsAmountMatch = (offerGuestsAmount) => isDefaultMatch(filter.guestsAmount, offerGuestsAmount);
 
 const isPriceMatch = (offerPrice) => {
-  offerPrice = Number(offerPrice);
   switch (filter.price) {
     case FilterPriceValue.ANY:
       return true;
@@ -77,21 +74,18 @@ const isFeaturesMatch =  (offerFeatures) => {
   }
 
   offerFeatures = new Set(offerFeatures);
-
   return filterFeatures.every((value) => offerFeatures.has(value));
 };
 
-const filterOffer = (offer) => (
-  isTypeMatch(offer.type) &&
-  isPriceMatch(offer.price) &&
-  isRoomsAmountMatch(offer.roomsAmount) &&
-  isGuestsAmountMatch(offer.guestsAmount) &&
-  isFeaturesMatch(offer.features)
-);
-
 const onMapFilterNodeChange = () => {
   updateFilterValue();
-  filteredOffers = initialOffers.filter(filterOffer);
+  filteredOffers = initialOffers.filter((offer) => (
+    isTypeMatch(offer.type) &&
+    isPriceMatch(offer.price) &&
+    isRoomsAmountMatch(offer.roomsAmount) &&
+    isGuestsAmountMatch(offer.guestsAmount) &&
+    isFeaturesMatch(offer.features)
+  ));
 };
 
 const reset = () => {
