@@ -23,15 +23,15 @@ const createFeatureNode = (featureType) => {
   return featureNode;
 };
 
-export const createPopupNode = ({ author, offer }) => {
+export const createPopupNode = (offer) => {
   const popupNode = popupTemplateNode.cloneNode(true);
 
-  popupNode.querySelector('.popup__avatar').src = author.avatar;
+  popupNode.querySelector('.popup__avatar').src = offer.authorAvatar;
   popupNode.querySelector('.popup__title').textContent = offer.title;
   popupNode.querySelector('.popup__type').textContent = typesToTextContent[offer.type];
   popupNode.querySelector('.popup__text--price').textContent = `${offer.price} ₽/ночь`;
   popupNode.querySelector('.popup__text--address').textContent = offer.address;
-  popupNode.querySelector('.popup__text--capacity').textContent = `${offer.rooms} комнаты для ${offer.guests} гостей`;
+  popupNode.querySelector('.popup__text--capacity').textContent = `${offer.roomsAmount} комнаты для ${offer.guestsAmount} гостей`;
   popupNode.querySelector('.popup__text--time').textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`;
 
   const featuresContainerNode = popupNode.querySelector('.popup__features');

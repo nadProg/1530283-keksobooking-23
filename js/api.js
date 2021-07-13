@@ -3,6 +3,20 @@ const Url = {
   GET: 'https://23.javascript.pages.academy/keksobooking/data',
 };
 
+const adoptData = ({author, offer, location}) => {
+  const adoptedData = {
+    authorAvatar: author.avatar,
+    location,
+    guestsAmount: offer.guests,
+    roomsAmount: offer.rooms,
+    ...offer,
+  };
+
+  delete adoptedData.guests;
+  delete adoptedData.rooms;
+  return adoptedData;
+};
+
 const fetchData = async (method, body) => {
   method = method.toUpperCase();
 
@@ -12,7 +26,7 @@ const fetchData = async (method, body) => {
     throw new Error(`${response.status} — ${response.statusText}`);
   }
 
-  return response.json();
+  return (await response.json()).map(adoptData);
 };
 
 export const getData = () => fetchData('GET');

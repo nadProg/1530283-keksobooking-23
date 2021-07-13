@@ -19,89 +19,79 @@ const filterRoomNode = mapFilterNode.querySelector('#housing-rooms');
 const filterGuestNode = mapFilterNode.querySelector('#housing-guests');
 const filterFeatureNodes = Array.from(mapFilterNode.querySelectorAll('.map__checkbox'));
 
+let filter  = {
+  type: null,
+  price: null,
+  roomsAmount: null,
+  guestsAmount: null,
+  features: null,
+};
 let initialOffers = null;
 let filteredOffers = null;
 
-disableForm(mapFilterNode);
-
 const isAny = (value) => value === 'any';
 
-const getFilterValues = () => ({
-  type: filterTypeNode.value,
-  price: filterPriceNode.value,
-  room: filterRoomNode.value,
-  guest: filterGuestNode.value,
-  features: Array.from(
-    filterFeatureNodes
-      .filter(({ checked }) => checked)
-      .map(({ value }) => value),
-  ),
-});
+const updateFilterValue = () => {
+  filter = {
+    type: filterTypeNode.value,
+    price: filterPriceNode.value,
+    roomsAmount: filterRoomNode.value,
+    guestsAmount: filterGuestNode.value,
+    features: Array.from(
+      filterFeatureNodes
+        .filter(({ checked }) => checked)
+        .map(({ value }) => value),
+    ),
+  };
+};
 
 const isDefaultMatch =  (filterValue, offerValue) => {
   offerValue = String(offerValue);
   return isAny(filterValue) || filterValue === offerValue;
 };
 
-const isTypeMatch = isDefaultMatch;
+const isTypeMatch = (offerType) => isDefaultMatch(filter.type, offerType);
 
-const isRoomMatch = isDefaultMatch;
+const isRoomsAmountMatch = (offerRoomsAmount) => isDefaultMatch(filter.roomsAmount, offerRoomsAmount);
 
-const isGuestMatch = isDefaultMatch;
+const isGuestsAmountMatch = (offerGuestsAmount) => isDefaultMatch(filter.guestsAmount, offerGuestsAmount);
 
-const isPriceMatch = (filterValue, offerValue) => {
-  offerValue = Number(offerValue);
-  switch (filterValue) {
+const isPriceMatch = (offerPrice) => {
+  offerPrice = Number(offerPrice);
+  switch (filter.price) {
     case FilterPriceValue.ANY:
       return true;
     case FilterPriceValue.LOW:
-      return offerValue < FilterPriceLimit.LOW;
+      return offerPrice < FilterPriceLimit.LOW;
     case FilterPriceValue.MIDDLE:
-      return offerValue >= FilterPriceLimit.LOW && offerValue < FilterPriceLimit.HIGH;
+      return offerPrice >= FilterPriceLimit.LOW && offerPrice < FilterPriceLimit.HIGH;
     case FilterPriceValue.HIGH:
-      return offerValue >= FilterPriceLimit.HIGH;
+      return offerPrice >= FilterPriceLimit.HIGH;
   }
 };
 
-const isFeaturesMatch =  (filterValues, offerValues) => {
-  if (!filterValues.length) {
+const isFeaturesMatch =  (offerFeatures) => {
+  const filterFeatures = filter.features;
+  if (!filterFeatures.length) {
     return true;
   }
 
-  offerValues = new Set(offerValues);
+  offerFeatures = new Set(offerFeatures);
 
-  return filterValues.every((value) => offerValues.has(value));
+  return filterFeatures.every((value) => offerFeatures.has(value));
 };
 
-const filterOffer = ({ offer }) => {
-  const {
-    type,
-    price,
-    room,
-    guest,
-    features,
-  } = getFilterValues();
+const filterOffer = (offer) => (
+  isTypeMatch(offer.type) &&
+  isPriceMatch(offer.price) &&
+  isRoomsAmountMatch(offer.roomsAmount) &&
+  isGuestsAmountMatch(offer.guestsAmount) &&
+  isFeaturesMatch(offer.features)
+);
 
-  return (isTypeMatch(type, offer.type) &&
-    isPriceMatch(price, offer.price) &&
-    isRoomMatch(room, offer.rooms) &&
-    isGuestMatch(guest, offer.guests) &&
-    isFeaturesMatch(features, offer.features));
-};
-
-const initialize = (offers, afterMapFilterNodeChange) => {
-  initialOffers = offers;
-  enableForm(mapFilterNode);
-
-  mapFilterNode.addEventListener('change', () => {
-    filteredOffers = initialOffers.filter(filterOffer);
-
-    if (isFunction(afterMapFilterNodeChange)) {
-      afterMapFilterNodeChange();
-    }
-  });
-
-  mapFilterNode.dispatchEvent(new Event('change'));
+const onMapFilterNodeChange = () => {
+  updateFilterValue();
+  filteredOffers = initialOffers.filter(filterOffer);
 };
 
 const reset = () => {
@@ -109,6 +99,23 @@ const reset = () => {
   mapFilterNode.dispatchEvent(new Event('change'));
 };
 
+const initialize = (offers, afterMapFilterNodeChange) => {
+  initialOffers = offers;
+  enableForm(mapFilterNode);
+
+  mapFilterNode.addEventListener('change', onMapFilterNodeChange);
+
+  if (isFunction(afterMapFilterNodeChange)) {
+    mapFilterNode.addEventListener('change', () => {
+      setTimeout(() => afterMapFilterNodeChange());
+    });
+  }
+
+  reset();
+};
+
 const getFilteredOffers = () => filteredOffers;
+
+disableForm(mapFilterNode);
 
 export { initialize, reset, getFilteredOffers };
