@@ -9,14 +9,13 @@ const avatarImageNode = adFormNode.querySelector('.ad-form-header__preview img')
 
 const reset = () => avatarImageNode.src = DEFAULT_AVATAR;
 
-const onAvatartNodeClick = () => alert.hide();
+const onAvatarInputNodeClick = () => alert.hide();
 
 const onAvatarInputNodeChange = async () => {
   const file = avatarInputNode.files[0];
 
   if (!file) {
-    reset();
-    return;
+    return reset();
   }
 
   try {
@@ -29,7 +28,7 @@ const onAvatarInputNodeChange = async () => {
 };
 
 const initialize = () => {
-  avatarInputNode.addEventListener('click', onAvatartNodeClick);
+  avatarInputNode.addEventListener('click', onAvatarInputNodeClick);
   avatarInputNode.addEventListener('change', onAvatarInputNodeChange);
 };
 

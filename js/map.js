@@ -1,7 +1,7 @@
 import { isFunction } from './utils.js';
 import { createPopupNode } from './popup.js';
 
-const INITIAL_ZOOM = 14;
+const INITIAL_ZOOM = 13.5;
 const INITIAL_VIEW = {
   lat: 35.68,
   lng: 139.75,

@@ -3,13 +3,13 @@ const Url = {
   GET: 'https://23.javascript.pages.academy/keksobooking/data',
 };
 
-const adoptData = ({author, offer, location}) => {
+const adoptOffers = ({ author, offer, location }) => {
   const adoptedData = {
-    authorAvatar: author.avatar,
-    location,
-    guestsAmount: offer.guests,
-    roomsAmount: offer.rooms,
     ...offer,
+    location,
+    roomsAmount: offer.rooms,
+    guestsAmount: offer.guests,
+    authorAvatar: author.avatar,
   };
 
   delete adoptedData.guests;
@@ -29,6 +29,6 @@ const fetchData = async (method, body) => {
   return response.json();
 };
 
-export const getData = async () => (await fetchData('GET')).map(adoptData);
+export const getOffers = async () => (await fetchData('GET')).map(adoptOffers);
 
-export const postData = async (body) => fetchData('POST', body);
+export const postOffer = (body) => fetchData('POST', body);
