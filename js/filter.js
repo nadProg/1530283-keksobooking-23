@@ -77,7 +77,7 @@ const isFeaturesMatch =  (offerFeatures) => {
   return filterFeatures.every((value) => offerFeatures.has(value));
 };
 
-const onMapFilterNodeChange = () => {
+const onFilterNodeChange = () => {
   updateFilter();
   filteredOffers = initialOffers.filter((offer) => (
     isTypeMatch(offer.type) &&
@@ -93,15 +93,15 @@ const reset = () => {
   filterNode.dispatchEvent(new Event('change'));
 };
 
-const initialize = (offers, afterMapFilterNodeChange) => {
+const initialize = (offers, afterFilterNodeChange) => {
   initialOffers = offers;
   enableForm(filterNode);
 
-  filterNode.addEventListener('change', onMapFilterNodeChange);
+  filterNode.addEventListener('change', onFilterNodeChange);
 
-  if (isFunction(afterMapFilterNodeChange)) {
+  if (isFunction(afterFilterNodeChange)) {
     filterNode.addEventListener('change', () => {
-      setTimeout(() => afterMapFilterNodeChange());
+      setTimeout(() => afterFilterNodeChange());
     });
   }
 
