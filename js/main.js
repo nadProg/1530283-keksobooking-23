@@ -34,7 +34,7 @@ const afterAdFormNodeReset = () => {
   filter.reset();
 };
 
-const afterMapFilterNodeChange = () => {
+const afterFilterNodeChange = () => {
   showSimilarOffers();
   map.setViewToCurrentLocation();
 };
@@ -46,7 +46,7 @@ const initialize = async () => {
 
     try {
       const offers = await getOffers();
-      filter.initialize(offers, afterMapFilterNodeChange);
+      filter.initialize(offers, afterFilterNodeChange);
     } catch (error) {
       showAlert('Ошибка загрузки данных с сервера');
     }
