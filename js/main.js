@@ -1,16 +1,14 @@
 import { debounce, sortOffersByDistance, sliceFromStart } from './utils.js';
-import { getData } from './api.js';
+import { getOffers } from './api.js';
 import { show as showAlert } from './alert.js';
 import * as map from './map.js';
 import * as adForm from './ad-form.js';
-import * as mapFilter from './map-filter.js';
+import * as filter from './filter.js';
 
 const MAX_SIMILAR_OFFERS_AMOUNT = 10;
 
-const setCurrentAddress = () => adForm.setAddress(map.getCurrentLocation());
-
 const showSimilarOffers = debounce(() => {
-  const filteredOffers = mapFilter.getFilteredOffers();
+  const filteredOffers = filter.getFilteredOffers();
 
   if (filteredOffers) {
     const currentLocation = map.getCurrentLocation();
@@ -24,10 +22,7 @@ const showSimilarOffers = debounce(() => {
   }
 });
 
-const afterMapFilterNodeChange = () => {
-  showSimilarOffers();
-  map.setViewToCurrentLocation();
-};
+const setCurrentAddress = () => adForm.setAddress(map.getCurrentLocation());
 
 const onMainMarkerMove = () => {
   setCurrentAddress();
@@ -36,7 +31,12 @@ const onMainMarkerMove = () => {
 
 const afterAdFormNodeReset = () => {
   map.reset();
-  mapFilter.reset();
+  filter.reset();
+};
+
+const afterMapFilterNodeChange = () => {
+  showSimilarOffers();
+  map.setViewToCurrentLocation();
 };
 
 const initialize = async () => {
@@ -45,8 +45,8 @@ const initialize = async () => {
     adForm.initialize(afterAdFormNodeReset);
 
     try {
-      const offers = await getData();
-      mapFilter.initialize(offers, afterMapFilterNodeChange);
+      const offers = await getOffers();
+      filter.initialize(offers, afterMapFilterNodeChange);
     } catch (error) {
       showAlert('Ошибка загрузки данных с сервера');
     }

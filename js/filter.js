@@ -12,14 +12,14 @@ const FilterPriceLimit = {
   HIGH: 50000,
 };
 
-const mapFilterNode = document.querySelector('.map__filters');
-const filterTypeNode = mapFilterNode.querySelector('#housing-type');
-const filterPriceNode = mapFilterNode.querySelector('#housing-price');
-const filterRoomsNode = mapFilterNode.querySelector('#housing-rooms');
-const filterGuestsNode = mapFilterNode.querySelector('#housing-guests');
-const filterFeatureNodes = Array.from(mapFilterNode.querySelectorAll('.map__checkbox'));
+const filterNode = document.querySelector('.map__filters');
+const filterTypeNode = filterNode.querySelector('#housing-type');
+const filterPriceNode = filterNode.querySelector('#housing-price');
+const filterRoomsNode = filterNode.querySelector('#housing-rooms');
+const filterGuestsNode = filterNode.querySelector('#housing-guests');
+const filterFeatureNodes = Array.from(filterNode.querySelectorAll('.map__checkbox'));
 
-let filter  = {
+let currentFilter  = {
   type: null,
   price: null,
   roomsAmount: null,
@@ -32,8 +32,8 @@ let filteredOffers = null;
 
 const isAny = (value) => value === 'any';
 
-const updateFilterValue = () => {
-  filter = {
+const updateFilter = () => {
+  currentFilter = {
     type: filterTypeNode.value,
     price: filterPriceNode.value,
     roomsAmount: filterRoomsNode.value,
@@ -48,14 +48,14 @@ const updateFilterValue = () => {
 
 const isDefaultMatch =  (filterValue, offerValue) => isAny(filterValue) || filterValue === String(offerValue);
 
-const isTypeMatch = (offerType) => isDefaultMatch(filter.type, offerType);
+const isTypeMatch = (offerType) => isDefaultMatch(currentFilter.type, offerType);
 
-const isRoomsAmountMatch = (offerRoomsAmount) => isDefaultMatch(filter.roomsAmount, offerRoomsAmount);
+const isRoomsAmountMatch = (offerRoomsAmount) => isDefaultMatch(currentFilter.roomsAmount, offerRoomsAmount);
 
-const isGuestsAmountMatch = (offerGuestsAmount) => isDefaultMatch(filter.guestsAmount, offerGuestsAmount);
+const isGuestsAmountMatch = (offerGuestsAmount) => isDefaultMatch(currentFilter.guestsAmount, offerGuestsAmount);
 
 const isPriceMatch = (offerPrice) => {
-  switch (filter.price) {
+  switch (currentFilter.price) {
     case FilterPriceValue.ANY:
       return true;
     case FilterPriceValue.LOW:
@@ -68,7 +68,7 @@ const isPriceMatch = (offerPrice) => {
 };
 
 const isFeaturesMatch =  (offerFeatures) => {
-  const filterFeatures = filter.features;
+  const filterFeatures = currentFilter.features;
   if (!filterFeatures.length) {
     return true;
   }
@@ -78,7 +78,7 @@ const isFeaturesMatch =  (offerFeatures) => {
 };
 
 const onMapFilterNodeChange = () => {
-  updateFilterValue();
+  updateFilter();
   filteredOffers = initialOffers.filter((offer) => (
     isTypeMatch(offer.type) &&
     isPriceMatch(offer.price) &&
@@ -89,18 +89,18 @@ const onMapFilterNodeChange = () => {
 };
 
 const reset = () => {
-  mapFilterNode.reset();
-  mapFilterNode.dispatchEvent(new Event('change'));
+  filterNode.reset();
+  filterNode.dispatchEvent(new Event('change'));
 };
 
 const initialize = (offers, afterMapFilterNodeChange) => {
   initialOffers = offers;
-  enableForm(mapFilterNode);
+  enableForm(filterNode);
 
-  mapFilterNode.addEventListener('change', onMapFilterNodeChange);
+  filterNode.addEventListener('change', onMapFilterNodeChange);
 
   if (isFunction(afterMapFilterNodeChange)) {
-    mapFilterNode.addEventListener('change', () => {
+    filterNode.addEventListener('change', () => {
       setTimeout(() => afterMapFilterNodeChange());
     });
   }
@@ -110,6 +110,6 @@ const initialize = (offers, afterMapFilterNodeChange) => {
 
 const getFilteredOffers = () => filteredOffers;
 
-disableForm(mapFilterNode);
+disableForm(filterNode);
 
 export { initialize, reset, getFilteredOffers };

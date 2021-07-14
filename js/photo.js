@@ -39,7 +39,7 @@ const reset = () => {
   photoContainerNode.appendChild(emptyPhotoNode);
 };
 
-const onPhotoNodeClick = () => alert.hide();
+const onPhotoInputNodeClick = () => alert.hide();
 
 const onPhotoInputNodeChange = async () => {
   const files = Array.from(photoInputNode.files);
@@ -60,7 +60,7 @@ const onPhotoInputNodeChange = async () => {
 };
 
 const initialize = () => {
-  photoInputNode.addEventListener('click', onPhotoNodeClick);
+  photoInputNode.addEventListener('click', onPhotoInputNodeClick);
   photoInputNode.addEventListener('change', onPhotoInputNodeChange);
 };
 
