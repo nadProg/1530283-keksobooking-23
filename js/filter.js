@@ -77,7 +77,7 @@ const isFeaturesMatch =  (offerFeatures) => {
   return filterFeatures.every((value) => offerFeatures.has(value));
 };
 
-const onFilterNodeChange = () => {
+const setOnFilterNodeChange = (callback) => () => {
   updateFilter();
   filteredOffers = initialOffers.filter((offer) => (
     isTypeMatch(offer.type) &&
@@ -86,6 +86,10 @@ const onFilterNodeChange = () => {
     isGuestsAmountMatch(offer.guestsAmount) &&
     isFeaturesMatch(offer.features)
   ));
+
+  if (isFunction(callback)) {
+    callback(filteredOffers);
+  }
 };
 
 const reset = () => {
@@ -93,23 +97,15 @@ const reset = () => {
   filterNode.dispatchEvent(new Event('change'));
 };
 
-const initialize = (offers, afterFilterNodeChange) => {
+const initialize = (offers, callback) => {
   initialOffers = offers;
   enableForm(filterNode);
 
-  filterNode.addEventListener('change', onFilterNodeChange);
-
-  if (isFunction(afterFilterNodeChange)) {
-    filterNode.addEventListener('change', () => {
-      setTimeout(() => afterFilterNodeChange());
-    });
-  }
+  filterNode.addEventListener('change', setOnFilterNodeChange(callback));
 
   reset();
 };
 
-const getFilteredOffers = () => filteredOffers;
-
 disableForm(filterNode);
 
-export { initialize, reset, getFilteredOffers };
+export { initialize, reset };

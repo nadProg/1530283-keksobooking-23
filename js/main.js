@@ -7,43 +7,39 @@ import * as filter from './filter.js';
 
 const MAX_SIMILAR_OFFERS_AMOUNT = 10;
 
-const showSimilarOffers = debounce(() => {
-  const filteredOffers = filter.getFilteredOffers();
+const showSimilarOffers = debounce((filteredOffers) => {
+  const currentLocation = map.getCurrentLocation();
+  const sortedOffers = filteredOffers.map((offer) => {
+    const location = L.latLng(offer.location);
+    const distance = Math.round(currentLocation.distanceTo(location));
+    return { ...offer, distance};
+  }).sort(sortOffersByDistance);
 
-  if (filteredOffers) {
-    const currentLocation = map.getCurrentLocation();
-    const sortedOffers = filteredOffers.map((offer) => {
-      const location = L.latLng(offer.location);
-      const distance = Math.round(currentLocation.distanceTo(location));
-      return { ...offer, distance};
-    }).sort(sortOffersByDistance);
-
-    map.addMarkers(sliceFromStart(sortedOffers, MAX_SIMILAR_OFFERS_AMOUNT));
-  }
+  map.addMarkers(sliceFromStart(sortedOffers, MAX_SIMILAR_OFFERS_AMOUNT));
 });
 
 const setCurrentAddress = () => adForm.setAddress(map.getCurrentLocation());
 
 const onMainMarkerMove = () => setCurrentAddress();
 
-const afterAdFormNodeReset = () => {
+const onAdFormNodeReset = () => {
   map.reset();
   filter.reset();
 };
 
-const afterFilterNodeChange = () => {
-  showSimilarOffers();
+const onFilterNodeChange = (filteredOffers) => {
+  showSimilarOffers(filteredOffers);
   map.setViewToCurrentLocation();
 };
 
 const initialize = async () => {
   try {
     await map.initialize(onMainMarkerMove);
-    adForm.initialize(afterAdFormNodeReset);
+    adForm.initialize(onAdFormNodeReset);
 
     try {
       const offers = await getOffers();
-      filter.initialize(offers, afterFilterNodeChange);
+      filter.initialize(offers, onFilterNodeChange);
     } catch (error) {
       showAlert('Ошибка загрузки данных с сервера');
     }

@@ -27,12 +27,16 @@ const onAdFormNodeSubmit = async (evt) => {
   submitBtnNode.disabled = false;
 };
 
-const onAdFormNodeReset = () => {
+const setOnAdFormNodeReset = (callback) => () => {
   photo.reset();
   avatar.reset();
+
+  if (isFunction(callback)) {
+    setTimeout(callback);
+  }
 };
 
-const initialize = (afterAdFormNodeReset) => {
+const initialize = (callback) => {
   enableForm(adFormNode);
 
   photo.initialize();
@@ -42,13 +46,7 @@ const initialize = (afterAdFormNodeReset) => {
   checkTime.initialize();
 
   adFormNode.addEventListener('submit', onAdFormNodeSubmit);
-  adFormNode.addEventListener('reset', onAdFormNodeReset);
-
-  if (isFunction(afterAdFormNodeReset)) {
-    adFormNode.addEventListener('reset', () => {
-      setTimeout(() => afterAdFormNodeReset());
-    });
-  }
+  adFormNode.addEventListener('reset', setOnAdFormNodeReset(callback));
 
   adFormNode.reset();
 };
