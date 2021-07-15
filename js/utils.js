@@ -40,4 +40,4 @@ export const sliceFromStart = (items, number) => items.slice(0, number);
 
 export const sortOffersByDistance = (offerA, offerB) => offerA.distance - offerB.distance;
 
-export const roundCoordinate = (coordinate) => Number(coordinate.toFixed(MAX_COORDINATE_DIGIT));
+export const roundCoordinate = (coordinate) => coordinate.toFixed(MAX_COORDINATE_DIGIT);
