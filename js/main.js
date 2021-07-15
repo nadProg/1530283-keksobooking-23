@@ -9,6 +9,7 @@ const MAX_SIMILAR_OFFERS_AMOUNT = 10;
 
 const showSimilarOffers = debounce((filteredOffers) => {
   const currentLocation = map.getCurrentLocation();
+
   const sortedOffers = filteredOffers.map((offer) => {
     const location = L.latLng(offer.location);
     const distance = Math.round(currentLocation.distanceTo(location));

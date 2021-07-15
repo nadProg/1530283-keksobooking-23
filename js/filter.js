@@ -77,7 +77,7 @@ const isFeaturesMatch =  (offerFeatures) => {
   return filterFeatures.every((value) => offerFeatures.has(value));
 };
 
-const setOnFilterNodeChange = (callback) => () => {
+const getOnFilterNodeChange = (callback) => () => {
   updateFilter();
   filteredOffers = initialOffers.filter((offer) => (
     isTypeMatch(offer.type) &&
@@ -101,7 +101,7 @@ const initialize = (offers, callback) => {
   initialOffers = offers;
   enableForm(filterNode);
 
-  filterNode.addEventListener('change', setOnFilterNodeChange(callback));
+  filterNode.addEventListener('change', getOnFilterNodeChange(callback));
 
   reset();
 };
