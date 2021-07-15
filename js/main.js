@@ -24,10 +24,7 @@ const showSimilarOffers = debounce(() => {
 
 const setCurrentAddress = () => adForm.setAddress(map.getCurrentLocation());
 
-const onMainMarkerMove = () => {
-  setCurrentAddress();
-  showSimilarOffers();
-};
+const onMainMarkerMove = () => setCurrentAddress();
 
 const afterAdFormNodeReset = () => {
   map.reset();
