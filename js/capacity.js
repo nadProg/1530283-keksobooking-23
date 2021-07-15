@@ -43,9 +43,13 @@ const setGuestsValidity = () => {
 };
 
 const onRoomsNodeChange = () => {
-  enabledGuestsValues.forEach((value) => guestsValueToGuestsNode[value].disabled = true);
+  enabledGuestsValues.forEach((value) => {
+    guestsValueToGuestsNode[value].disabled = true;
+  });
   enabledGuestsValues = roomsValueToEnabledGuestsValues[roomsNode.value];
-  enabledGuestsValues.forEach((value) => guestsValueToGuestsNode[value].disabled = false);
+  enabledGuestsValues.forEach((value) => {
+    guestsValueToGuestsNode[value].disabled = false;
+  });
 
   setGuestsValidity();
 };

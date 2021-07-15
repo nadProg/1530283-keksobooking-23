@@ -5,12 +5,16 @@ export const adFormNode = document.body.querySelector('.ad-form');
 
 export const enableForm = (form) => {
   form.classList.remove(`${form.classList[0]}--disabled`);
-  Array.from(form.elements).forEach((element) => element.disabled = false);
+  Array.from(form.elements).forEach((element) => {
+    element.disabled = false;
+  });
 };
 
 export const disableForm = (form) => {
   form.classList.add(`${form.classList[0]}--disabled`);
-  Array.from(form.elements).forEach((element) => element.disabled = true);
+  Array.from(form.elements).forEach((element) => {
+    element.disabled = true;
+  });
 };
 
 export const renderNodes = (nodes, containerNode) => {
